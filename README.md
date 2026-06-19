@@ -1,10 +1,10 @@
 *This project has been created as part of the 42 curriculum by roandrie*
 
 <p align="center">
-  <img src="link" width="260" />
+  <img src="assets/logo.png" width="260" />
 </p>
 <h3 align="center">
-  <em>Introduction to function calling in LLMs</em>
+  <em>Will you answer my questions?</em>
 </h3>
 
 ---
@@ -61,6 +61,20 @@ todo
 ---
 
 ## ⚙️ How it works?
+
+### 🧩 System architecture
+
+### 🗿 Chunking Strategy
+
+### 🥊 Retrieval method
+
+### 📈 Performance analysis
+
+### 📠 Design decisions
+
+### 🏆 Challenges faced
+
+### 🗨 Example usage
 
 ---
 
