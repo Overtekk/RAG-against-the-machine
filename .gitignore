@@ -1,0 +1,9 @@
+# Python caches
+__pycache__
+.mypy_cache
+
+# Python files
+.python-version
+.venv
+
+# Other
