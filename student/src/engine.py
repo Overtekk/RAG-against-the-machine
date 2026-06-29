@@ -6,26 +6,38 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 14:36:25 by roandrie        ###   ########.fr        #
+#  Updated: 2026/06/29 15:58:50 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
+
+import pathlib
+from student.src.utils import (
+    is_folder_exist, is_file_exist, can_read_file, can_write_to_file
+)
+
 
 DEFAULT_DATASET_PATH : str = (
     'data/datasets/UnansweredQuestions/dataset_docs_public.json'
 )
-DEFAULT_SAVE_DIRECTORY: str = 'data/output/search_results'
 DEFAULT_STUDENT_ANSWER_PATH: str = (
     'data/output/search_results/dataset_docs_public.json'
 )
 DEFAULT_STUDENT_SEARCH_RESULTS_PATH: str = (
     'data/output/search_results/dataset_docs_public.json'
 )
+DEFAULT_SAVE_DIRECTORY: str = 'data/output/search_results'
+DEFAULT_VLLM_DIRECTORY: str = 'vllm-0.10.1'
 
 
 class RAGEngine():
 
-    def index(self, max_chunk_size: int = 2000) -> None:
-        pass
+    def index(
+        self,
+        vLLM_directory: str = DEFAULT_VLLM_DIRECTORY,
+        max_chunk_size: int = 2000
+    ) -> None:
+        if not is_folder_exist(vLLM_directory):
+            raise ValueError("vLLM folder not found.")
 
     def answer(self, prompt: str, k: int = 10) -> None:
         pass
@@ -36,7 +48,9 @@ class RAGEngine():
         k: int = 10,
         save_directory: str = DEFAULT_SAVE_DIRECTORY
     ) -> None:
-        pass
+        # Check paths
+        _check_path(dataset_path)
+        _check_path(save_directory, True)
 
     def evaluate_student_search_results(
         self,
@@ -45,11 +59,44 @@ class RAGEngine():
         k: int = 10,
         max_context_lenght: int = 2000
     ) -> None:
-        pass
+        # Check paths
+        _check_path(student_answer_path)
+        _check_path(dataset_path)
 
     def answer_dataset(
         self,
         student_search_results_path: str = DEFAULT_STUDENT_SEARCH_RESULTS_PATH,
         save_directory: str = DEFAULT_SAVE_DIRECTORY
     ) -> None:
-        pass
+        # Check paths
+        _check_path(student_search_results_path)
+        _check_path(save_directory, True)
+
+
+# :--------------------:
+#   PRIVATES FUNCTIONS
+# :--------------------:
+
+
+def _check_path(raw_path: str, is_directory: bool = False) -> None:
+    path: pathlib.Path = pathlib.Path(raw_path)
+
+    # Create the folders if they do not exist
+    if path.parent:
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+    if is_directory:
+        if not is_folder_exist(path):
+            path.mkdir()
+        else:
+            if not can_read_file(path) and not can_write_to_file(path):
+                raise ValueError(f"Permission error for {path}")
+
+
+    else:
+        if not is_file_exist(path):
+            path.touch()
+
+        else:
+            if not can_read_file(path) and not can_write_to_file(path):
+                raise ValueError(f"Permission error for {path}")
