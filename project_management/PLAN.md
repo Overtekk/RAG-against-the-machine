@@ -16,6 +16,9 @@
 | Provide a CLI using Python Fire | ❌ |
 | Implemente a progress bars using `tqdm` | ❌ |
 | Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ❌ |
+| Flake8 norm | ❌ |
+| Mypy norm | ❌ |
+| Docstrings included in all functions and classes | ❌ |
 
 ### 3. RAG
 
@@ -28,6 +31,7 @@
 | Create a searchable knowledge index using `TF-IDF` or `BM25` | ❌ |
 | Chunking Strategy for Python code chuncking | ❌ |
 | Chunking Strategy for Text chunking | ❌ |
+Configure maximum chunk size via CLI argument (maximum 2000 characters) | ❌ |
 | Store the index for fast retrieval (max 5 minutes indexing time) | ❌ |
 
 #### 3.2 Retrieval System
@@ -36,7 +40,7 @@
 | :-------: | :----: |
 | Implement semantic search over the indexed knowledge base | ❌ |
 | Return top-k most relevant code snippets for any querry | ❌ |
-| Each result must include: file_path, first_character_index, last_character_index | ❌ |
+| Each result must include: `file_path`, `first_character_index`, `last_character_index` | ❌ |
 | Support batch processing of multiple questions from JSON datasets | ❌ |
 | Achieve at least 80% recall@5 on docs questions and 50% on code questions | ❌ |
 
@@ -76,12 +80,17 @@
 | `answer` (answer a single question with context) | ❌ |
 | `answer_dataset` (generate answers from search results) | ❌ |
 | `evaluate` (evaluate search results against ground truth) | ❌ |
+| Handle edge cases and degenerate inputs gracefully with clear error messages | ❌ |
 
 ### 4. Data Models
 
 | Objective | Statut |
 | :-------: | :----: |
-| Implements all pydantic models | ❌ |
+| Implement `MinimalSource` model (`file_path`, `first_character_index`, `last_character_index`) | ❌ |
+| Implement `UnansweredQuestion` and `AnsweredQuestion` models | ❌ |
+| Implement `RagDataset` model | ❌ |
+| Implement `MinimalSearchResults` and `MinimalAnswer` models | ❌ |
+| Implement `StudentSearchResults` and `StudentSearchResultsAndAnswer` models | ❌ |
 
 ### 5. Output
 
@@ -90,7 +99,7 @@
 | Search operations: `StudentSearchResults` models with `search_results` and `k` | ❌ |
 | Answer generation: `StudentSearchResultsAndAnswer` model with `search_results` and `k` | ❌ |
 | Source information: `MinimalSource` contains `file_path`, `first_character_index`, `last_character_index` | ❌ |
-| Output good format | | ❌ |
+| Output strictly formatted as a comprehensive JSON file respecting the Pydantic models | | ❌ |
 
 ### 6. Evaluation
 
@@ -118,4 +127,3 @@
 | Global structure of the README | ❌ |
 | Initial texts | ❌ |
 | Additionals Sections | ❌ |
-
