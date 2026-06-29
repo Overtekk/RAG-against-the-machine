@@ -113,14 +113,16 @@ This project must have a Makefile and the following rules:
 | :------: | :---------: |
 | [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is |
 
+### Specific Libraries Documentation
+| Resource | Description |
+| :------: | :---------: |
+| [Github.io - Python Fire](https://google.github.io/python-fire/guide/) | Documentation about `Python Fire` |
+
 ### Other
 | Resource | Description |
 | :------: | :---------: |
 | [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | Help with the project |
 
-### Documentation
-| Resource | Description |
-| :------: | :---------: |
 
 ### IA was use to:
 - todo

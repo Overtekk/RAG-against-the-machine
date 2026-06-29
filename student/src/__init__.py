@@ -6,6 +6,13 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:40 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/19 19:27:40 by roandrie        ###   ########.fr        #
+#  Updated: 2026/06/29 14:19:04 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
+
+from student.src.engine import RAGEngine
+
+
+__all__ = [
+    'RAGEngine'
+]

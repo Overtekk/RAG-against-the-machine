@@ -6,12 +6,12 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:39:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 13:38:26 by roandrie        ###   ########.fr        #
+#  Updated: 2026/06/29 13:58:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 
-from src.model.models import (
+from student.src.model.models import (
     MinimalSource,
     UnansweredQuestion, AnsweredQuestion,
     RagDataset,

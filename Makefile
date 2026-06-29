@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/19 19:33:11 by roandrie        ###   ########.fr        #
+#  Updated: 2026/06/29 13:55:41 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -22,7 +22,7 @@ MYPY_FLAGS		=	--warn-return-any --warn-unused-ignores --ignore-missing-imports -
 INSTALL_UV		=	curl -LsSf https://astral.sh/uv/install.sh | sh
 CHECK_UV		=	command -v uv
 
-SRC				=	src
+SRC				=	student
 
 
 # ===================
