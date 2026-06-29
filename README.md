@@ -113,6 +113,11 @@ This project must have a Makefile and the following rules:
 | :------: | :---------: |
 | [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is |
 
+### Other
+| Resource | Description |
+| :------: | :---------: |
+| [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | Help with the project |
+
 ### Documentation
 | Resource | Description |
 | :------: | :---------: |
