@@ -6,14 +6,16 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 15:58:50 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/01 14:08:52 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
 from student.src.utils import (
-    is_folder_exist, is_file_exist, can_read_file, can_write_to_file
+    is_folder_exist, is_file_exist, can_read_file, can_write_to_file,
+    print_log
 )
+from student.src.indexer import files
 
 
 DEFAULT_DATASET_PATH : str = (
@@ -27,6 +29,9 @@ DEFAULT_STUDENT_SEARCH_RESULTS_PATH: str = (
 )
 DEFAULT_SAVE_DIRECTORY: str = 'data/output/search_results'
 DEFAULT_VLLM_DIRECTORY: str = 'vllm-0.10.1'
+VLLM_ZIP: str = 'vllm-0.10.1.zip'
+
+INDEX_DIRECTORY: str = 'data/processed/'
 
 
 class RAGEngine():
@@ -36,8 +41,22 @@ class RAGEngine():
         vLLM_directory: str = DEFAULT_VLLM_DIRECTORY,
         max_chunk_size: int = 2000
     ) -> None:
-        if not is_folder_exist(vLLM_directory):
-            raise ValueError("vLLM folder not found.")
+        if not is_file_exist(VLLM_ZIP):
+            if not is_folder_exist(vLLM_directory):
+                raise ValueError(
+                    "vLLM zip or folder not found. Download it first and then"
+                    "re-run the program.")
+
+        elif not is_folder_exist(vLLM_directory):
+            files.extract_archive(VLLM_ZIP)
+        else:
+            if not can_read_file(vLLM_directory):
+                raise ValueError(
+                    f"Error while trying to open {vLLM_directory}")
+
+        print_log(
+            f"Ingestion complete! Indices saved under '{INDEX_DIRECTORY}'"
+        )
 
     def answer(self, prompt: str, k: int = 10) -> None:
         pass
@@ -91,7 +110,6 @@ def _check_path(raw_path: str, is_directory: bool = False) -> None:
         else:
             if not can_read_file(path) and not can_write_to_file(path):
                 raise ValueError(f"Permission error for {path}")
-
 
     else:
         if not is_file_exist(path):

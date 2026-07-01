@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 15:59:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/01 13:31:10 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,7 +21,7 @@ def main() -> int:
     try:
 
         print_with_color(
-            '\nRAG joined the terminal\n', 'bright_yellow'
+            '\n📤 RAG joined the terminal\n', 'bright_yellow'
         )
 
         # Init the CLI with Python Fire
@@ -31,7 +31,7 @@ def main() -> int:
 
     except ValueError as e:
         print_error(e)
-        print_with_color('\nRAG left the terminal.', 'bright_yellow')
+        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
         return 1
 
     # except Exception as e:
@@ -46,5 +46,5 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print_error('Program interrupted by the user. 😥\nGoodbye!')
-        print_with_color('\nRAG left the terminal.', 'bright_yellow')
+        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
         sys.exit(130)

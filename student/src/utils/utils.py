@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 13:40:01 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 13:48:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/01 13:26:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -162,7 +162,7 @@ def print_warn(message: str) -> None:
     ERROR_CONSOLE.print(f"[bold yellow]{prefix + content}[/bold yellow]")
 
 
-def print_log(message: str) -> None:
+def print_log(message: str, color: str = "white") -> None:
     """
     Display a formatted log message on the standard stream using 'log' from
     rich. Using '_stack_offset' allow good naming for the file.
@@ -170,10 +170,12 @@ def print_log(message: str) -> None:
     Args:
         message (str): The specific message to be displayed.
     """
-    STANDARD_CONSOLE.log(message, _stack_offset=2)
+    style_rule = _check_color_validation(color)
+
+    STANDARD_CONSOLE.log(message, _stack_offset=2, style=style_rule)
 
 
-def print_rule(message: str, color: str = "bold blue") -> None:
+def print_rule(message: str = None, color: str = "bold blue") -> None:
     """
     Display a horizontal rule with a message at the center and with a
     specific color. If the color doesn't exist or isn't specify, the color
@@ -183,14 +185,7 @@ def print_rule(message: str, color: str = "bold blue") -> None:
         message (str): The specific message to be displayed.
         color (str): The color used for the rule.
     """
-    style_rule: str = color
-
-    try:
-        Style.parse(style_rule)
-
-    except StyleSyntaxError:
-        style_rule = "bold blue"
-        print_error(f"'{color}' is unkown. Switching to default (bold blue).")
+    style_rule = _check_color_validation(color)
 
     STANDARD_CONSOLE.rule(message, style=style_rule)
 
@@ -204,6 +199,16 @@ def print_with_color(message: str, color: str = "white") -> None:
         message (str): The specific message to be displayed.
         color (str): The color used for the print.
     """
+    style_rule = _check_color_validation(color)
+
+    STANDARD_CONSOLE.print(f"[{style_rule}]{message}[/{style_rule}]")
+
+
+# :-------------------:
+#   PRIVATE FUNCTIONS
+# :-------------------:
+
+def _check_color_validation(color: str) -> str:
     style_rule: str = color
 
     try:
@@ -213,4 +218,4 @@ def print_with_color(message: str, color: str = "white") -> None:
         style_rule = "white"
         print_error(f"'{color}' is unkown. Switching to default (white).")
 
-    STANDARD_CONSOLE.print(f"[{color}]{message}[/{color}]")
+    return style_rule

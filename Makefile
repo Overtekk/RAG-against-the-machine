@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/06/29 13:55:41 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/01 11:29:19 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -44,6 +44,21 @@ install:
 
 run:		install
 			$(UV_PYTHON) -m $(SRC)
+
+index:		install
+			$(UV_PYTHON) -m $(SRC) index
+
+answer:		install
+			$(UV_PYTHON) -m $(SRC) answer
+
+search:		install
+			$(UV_PYTHON) -m $(SRC) search_dataset
+
+eval:		install
+			$(UV_PYTHON) -m $(SRC) evaluate_student_search_results
+
+answer:		install
+			$(UV_PYTHON) -m $(SRC) answer_dataset
 
 run-debug:	install
 			$(UV_PYTHON) pac-man.py $(CONFIG) --debug
