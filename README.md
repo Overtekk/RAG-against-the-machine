@@ -112,6 +112,7 @@ This project must have a Makefile and the following rules:
 | Resource | Description |
 | :------: | :---------: |
 | [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is |
+| [Blog - Stephane Robert (fr)](https://blog.stephane-robert.info/docs/developper/programmation/python/rag-introduction/) | How to make a RAG |
 
 ### Specific Libraries Documentation
 | Resource | Description |
