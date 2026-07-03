@@ -15,7 +15,7 @@
 | Using the model **Qwen/Qwen3-0.6B** | ❌ |
 | Provide a CLI using Python Fire | ❌ |
 | Implemente a progress bars using `tqdm` | ❌ |
-| Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ❌ |
+| Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ✅ |
 | Flake8 norm | ❌ |
 | Mypy norm | ❌ |
 | Docstrings included in all functions and classes | ❌ |
@@ -86,19 +86,19 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ❌ |
 
 | Objective | Statut |
 | :-------: | :----: |
-| Implement `MinimalSource` model (`file_path`, `first_character_index`, `last_character_index`) | ❌ |
-| Implement `UnansweredQuestion` and `AnsweredQuestion` models | ❌ |
-| Implement `RagDataset` model | ❌ |
-| Implement `MinimalSearchResults` and `MinimalAnswer` models | ❌ |
-| Implement `StudentSearchResults` and `StudentSearchResultsAndAnswer` models | ❌ |
+| Implement `MinimalSource` model (`file_path`, `first_character_index`, `last_character_index`) | ✅ |
+| Implement `UnansweredQuestion` and `AnsweredQuestion` models | ✅ |
+| Implement `RagDataset` model | ✅ |
+| Implement `MinimalSearchResults` and `MinimalAnswer` models | ✅ |
+| Implement `StudentSearchResults` and `StudentSearchResultsAndAnswer` models | ✅ |
 
 ### 5. Output
 
 | Objective | Statut |
 | :-------: | :----: |
-| Search operations: `StudentSearchResults` models with `search_results` and `k` | ❌ |
-| Answer generation: `StudentSearchResultsAndAnswer` model with `search_results` and `k` | ❌ |
-| Source information: `MinimalSource` contains `file_path`, `first_character_index`, `last_character_index` | ❌ |
+| Search operations: `StudentSearchResults` models with `search_results` and `k` | ✅ |
+| Answer generation: `StudentSearchResultsAndAnswer` model with `search_results` and `k` | ✅ |
+| Source information: `MinimalSource` contains `file_path`, `first_character_index`, `last_character_index` | ✅ |
 | Output strictly formatted as a comprehensive JSON file respecting the Pydantic models | | ❌ |
 
 ### 6. Evaluation

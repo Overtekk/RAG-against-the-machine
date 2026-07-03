@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/01 14:08:52 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/03 11:54:53 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,7 +15,7 @@ from student.src.utils import (
     is_folder_exist, is_file_exist, can_read_file, can_write_to_file,
     print_log
 )
-from student.src.indexer import files
+from student.src.indexer import files, indexer
 
 
 DEFAULT_DATASET_PATH : str = (
@@ -27,11 +27,15 @@ DEFAULT_STUDENT_ANSWER_PATH: str = (
 DEFAULT_STUDENT_SEARCH_RESULTS_PATH: str = (
     'data/output/search_results/dataset_docs_public.json'
 )
+
 DEFAULT_SAVE_DIRECTORY: str = 'data/output/search_results'
+
 DEFAULT_VLLM_DIRECTORY: str = 'vllm-0.10.1'
 VLLM_ZIP: str = 'vllm-0.10.1.zip'
 
 INDEX_DIRECTORY: str = 'data/processed/'
+INDEX_BM25_DIRECTORY: str = 'data/processed/bm25_index'
+INDEX_CHUNKS_DIRECTORY: str = 'data/processed/chunks'
 
 
 class RAGEngine():
@@ -41,6 +45,7 @@ class RAGEngine():
         vLLM_directory: str = DEFAULT_VLLM_DIRECTORY,
         max_chunk_size: int = 2000
     ) -> None:
+        # Check for the vLLM zip or directory
         if not is_file_exist(VLLM_ZIP):
             if not is_folder_exist(vLLM_directory):
                 raise ValueError(
@@ -53,6 +58,18 @@ class RAGEngine():
             if not can_read_file(vLLM_directory):
                 raise ValueError(
                     f"Error while trying to open {vLLM_directory}")
+
+        # Check path for the processed data
+        list_directory: dict[str, str] = {
+            'index_dir': INDEX_DIRECTORY,
+            'bm25_dir': INDEX_BM25_DIRECTORY,
+            'chunk_dir': INDEX_CHUNKS_DIRECTORY
+        }
+
+        for dir in list_directory.values():
+            _check_path(dir, True)
+
+        indexer(vLLM_directory, max_chunk_size, list_directory)
 
         print_log(
             f"Ingestion complete! Indices saved under '{INDEX_DIRECTORY}'"

@@ -114,10 +114,18 @@ This project must have a Makefile and the following rules:
 | [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is |
 | [Blog - Stephane Robert (fr)](https://blog.stephane-robert.info/docs/developper/programmation/python/rag-introduction/) | How to make a RAG |
 
+### Indexing Documentation
+| Resource | Description |
+| :------: | :---------: |
+| [KMWLLC - TF-IDF vs BM25](https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/) | Introduction to TF-IDF and BM25 and comparaison between both |
+| [Huggingface - BM25s](https://huggingface.co/blog/xhluca/bm25s) | How to implement and use the BM25S |
+| [Github - BM25S](https://github.com/xhluca/bm25s) | Github of the BM25S repo |
+
 ### Specific Libraries Documentation
 | Resource | Description |
 | :------: | :---------: |
 | [Github.io - Python Fire](https://google.github.io/python-fire/guide/) | Documentation about `Python Fire` |
+| [W3Schools - `os.walk`](https://www.w3schools.com/python/ref_os_walk.asp) | How to use `os.walk` |
 
 ### Other
 | Resource | Description |

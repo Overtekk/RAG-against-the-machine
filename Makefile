@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/01 11:29:19 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/03 11:51:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -23,13 +23,16 @@ INSTALL_UV		=	curl -LsSf https://astral.sh/uv/install.sh | sh
 CHECK_UV		=	command -v uv
 
 SRC				=	student
+LINT_TESTER		=	$(SRC) \
+					test
 
 
 # ===================
 # =		RULES		=
 # ===================
 
-.PHONY:		all install run run-debug debug build clean fclean lint lint-strict delete-uv
+.PHONY:		all install run run-debug debug build clean fclean lint lint-strict delete-uv \
+			index, answer, search, eval, answer_dataset
 .SILENT:
 
 all:		install run
@@ -57,8 +60,8 @@ search:		install
 eval:		install
 			$(UV_PYTHON) -m $(SRC) evaluate_student_search_results
 
-answer:		install
-			$(UV_PYTHON) -m $(SRC) answer_dataset
+answer_dataset:		install
+					$(UV_PYTHON) -m $(SRC) answer_dataset
 
 run-debug:	install
 			$(UV_PYTHON) pac-man.py $(CONFIG) --debug

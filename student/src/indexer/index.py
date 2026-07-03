@@ -1,21 +1,20 @@
 # ************************************************************************* #
 #                                                                           #
 #                                                      :::      ::::::::    #
-#  __init__.py                                       :+:      :+:    :+:    #
+#  index.py                                          :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
-#  Created: 2026/07/01 11:24:58 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/03 11:12:22 by roandrie        ###   ########.fr        #
+#  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
+#  Updated: 2026/07/03 11:37:57 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-
-from student.src.indexer.files import extract_archive
-from student.src.indexer.index import indexer
+from .files import load_files
 
 
-__all__ = [
-    'extract_archive',
-    'indexer'
-]
+def indexer(
+    vLLM_path: str, chunk_size: int, data_directory: dict[str, str]) -> None:
+
+    loaded_files: list[tuple[str, str]] = load_files(vLLM_path)
+    print(loaded_files)
