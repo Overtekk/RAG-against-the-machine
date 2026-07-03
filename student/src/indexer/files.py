@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/01 11:18:23 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/03 11:47:28 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/03 13:20:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -46,6 +46,6 @@ def load_files(vLLM_path: str) -> list[tuple[str, str]]:
         dirs[:] = [d for d in dirs if d not in IGNORED_PATH]
 
         for file in filesname:
-            files_list.append(dirs, file)
+            files_list.append((dirs, file))
 
     return files_list
