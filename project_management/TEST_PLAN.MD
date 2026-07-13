@@ -1,0 +1,1 @@
+- Crash when using `uv run python -m src index 2`

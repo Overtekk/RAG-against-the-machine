@@ -5,17 +5,25 @@
 #                                                  +:+ +:+         +:+      #
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
-#  Created: 2026/07/01 11:24:58 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/03 11:12:22 by roandrie        ###   ########.fr        #
+#  Created: 2026/06/29 11:39:22 by roandrie        #+#    #+#               #
+#  Updated: 2026/07/13 12:50:08 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 
-from student.src.indexer.files import extract_archive
-from student.src.indexer.index import indexer
+from src.model.models import (
+    MinimalSource,
+    UnansweredQuestion, AnsweredQuestion,
+    RagDataset,
+    MinimalSearchResults, MinimalAnswer,
+    StudentSearchResults, StudentSearchResultsAndAnswer
+)
 
 
 __all__ = [
-    'extract_archive',
-    'indexer'
+    'MinimalSource',
+    'UnansweredQuestion', 'AnsweredQuestion',
+    'RagDataset',
+    'MinimalSearchResults', 'MinimalAnswer',
+    'StudentSearchResults', 'StudentSearchResultsAndAnswer'
 ]

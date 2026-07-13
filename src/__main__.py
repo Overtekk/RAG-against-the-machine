@@ -6,15 +6,15 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/01 13:31:10 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/13 12:56:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import sys
 import fire
 
-from student.src.utils import print_error, print_with_color
-from student.src import RAGEngine
+from src.utils import print_error, print_with_color
+from .RAG_engine import RAGEngine
 
 
 def main() -> int:

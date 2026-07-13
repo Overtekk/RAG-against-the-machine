@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/03 11:51:14 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/13 12:51:36 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -22,7 +22,7 @@ MYPY_FLAGS		=	--warn-return-any --warn-unused-ignores --ignore-missing-imports -
 INSTALL_UV		=	curl -LsSf https://astral.sh/uv/install.sh | sh
 CHECK_UV		=	command -v uv
 
-SRC				=	student
+SRC				=	src
 LINT_TESTER		=	$(SRC) \
 					test
 
@@ -73,6 +73,7 @@ clean:
 			find . -type f -name "*.pyo" -delete
 			rm -rf .mypy_cache
 			rm -rf .pytest_cache
+			rm -rf data/processed
 
 fclean:		clean
 			@echo "$(YELLOW)Cleaning .venv, build and dist folder... 🗑️$(RESET)"

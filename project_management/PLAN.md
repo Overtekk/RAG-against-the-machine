@@ -13,7 +13,7 @@
 | Objective | Statut |
 | :-------: | :----: |
 | Using the model **Qwen/Qwen3-0.6B** | ❌ |
-| Provide a CLI using Python Fire | ❌ |
+| Provide a CLI using Python Fire | ✅ |
 | Implemente a progress bars using `tqdm` | ❌ |
 | Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ✅ |
 | Flake8 norm | ❌ |

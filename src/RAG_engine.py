@@ -6,16 +6,17 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/03 11:54:53 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/13 12:49:48 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
-from student.src.utils import (
+from src.indexer import indexer
+from src.utils import (
     is_folder_exist, is_file_exist, can_read_file, can_write_to_file,
     print_log
 )
-from student.src.indexer import files, indexer
+from src.indexer import files
 
 
 DEFAULT_DATASET_PATH : str = (
@@ -45,6 +46,10 @@ class RAGEngine():
         vLLM_directory: str = DEFAULT_VLLM_DIRECTORY,
         max_chunk_size: int = 2000
     ) -> None:
+        # - SECURITY -
+        if max_chunk_size <= 0:
+            raise ValueError("Chunk size need to be superior than 0.")
+
         # Check for the vLLM zip or directory
         if not is_file_exist(VLLM_ZIP):
             if not is_folder_exist(vLLM_directory):
@@ -75,10 +80,10 @@ class RAGEngine():
             f"Ingestion complete! Indices saved under '{INDEX_DIRECTORY}'"
         )
 
-    def answer(self, prompt: str, k: int = 10) -> None:
+    def search(self,k: int = 10,) -> None:
         pass
 
-    def search_dataset(
+    def search_dataset (
         self,
         dataset_path: str = DEFAULT_DATASET_PATH,
         k: int = 10,
@@ -86,6 +91,18 @@ class RAGEngine():
     ) -> None:
         # Check paths
         _check_path(dataset_path)
+        _check_path(save_directory, True)
+
+    def answer(self, prompt: str, k: int = 10) -> None:
+        pass
+
+    def answer_dataset(
+        self,
+        student_search_results_path: str = DEFAULT_STUDENT_SEARCH_RESULTS_PATH,
+        save_directory: str = DEFAULT_SAVE_DIRECTORY
+    ) -> None:
+        # Check paths
+        _check_path(student_search_results_path)
         _check_path(save_directory, True)
 
     def evaluate_student_search_results(
@@ -98,15 +115,6 @@ class RAGEngine():
         # Check paths
         _check_path(student_answer_path)
         _check_path(dataset_path)
-
-    def answer_dataset(
-        self,
-        student_search_results_path: str = DEFAULT_STUDENT_SEARCH_RESULTS_PATH,
-        save_directory: str = DEFAULT_SAVE_DIRECTORY
-    ) -> None:
-        # Check paths
-        _check_path(student_search_results_path)
-        _check_path(save_directory, True)
 
 
 # :--------------------:
