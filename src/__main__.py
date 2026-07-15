@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 12:56:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 10:40:28 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -18,13 +18,19 @@ from .RAG_engine import RAGEngine
 
 
 def main() -> int:
+    """Main function of the programm. Launch the CLI interface by calling the
+    RAGEngine class.
+
+    Returns:
+        int: 0 if success. 1 if error.
+    """
     try:
 
         print_with_color(
-            '\n📤 RAG joined the terminal\n', 'bright_yellow'
-        )
+            '\n📤 RAG joined the terminal\n', 'bright_yellow')
 
-        # Init the CLI with Python Fire
+        # Init the CLI with Python Fire by calling the RAGEngine class as
+        # argument.
         fire.Fire(RAGEngine)
 
         return 0

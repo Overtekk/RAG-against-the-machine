@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 14:13:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 10:25:12 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -29,16 +29,22 @@ def indexer(
     print_rule()
 
     # - Chunking -
-    # Init the Chunker class, create the empty list and go throught the list of
-    # files and content to chunk it
+    # Init the chunker class with the chunk size
     the_chunker = ChunkerEngine(chunk_size)
 
     metadatas_list: list[MinimalSource] = []
     texts_list: list[str] = []
+
+    # Go throught all files and, if the file is not empty, add the
+    # MinimalSource to the metadata list, and the content is the texts list.
+    # The metadata will be the corpus.
     for file_path, content in tqdm(loaded_files, desc='Chunking'):
         chunked_file = the_chunker.process(file_path, content)
+
         if chunked_file:
             for metadata, raw_text in chunked_file:
+                # Note: transform the metadata into dict because bm25 doesn't
+                # like object other than str, dict and list.
                 metadatas_list.append(metadata.model_dump())
                 texts_list.append(raw_text)
 

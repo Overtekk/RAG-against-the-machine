@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/01 11:18:23 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 12:50:11 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 10:48:44 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -20,8 +20,24 @@ IGNORED_PATH = [
     '__pycache__', '.git'
 ]
 
+EXTENSIONS_TO_CHECK = [
+    '.py', '.md'
+]
+
 
 def extract_archive(zip_path: str) -> None:
+    """Extract an archive.
+
+    Extract the given zip file using the zip name.
+
+    Args:
+        zip_path (str): Path of the zip file.
+
+    Raises:
+        ValueError: If an error occurred during the extracting or if not a zip
+                    file.
+        ValueError: Error with permissions.
+    """
     print_rule()
     print_log("📁 Extracting ...")
 
@@ -38,16 +54,34 @@ def extract_archive(zip_path: str) -> None:
 
 
 def load_files(vLLM_path: str) -> list[tuple[str, str]]:
+    """Files loader.
+
+    Scan all files. If a files have the correct extension, construct it path
+    from the root, open it and add the content to the list. In case of error,
+    print it to the console without closing the programm.
+
+    Args:
+        vLLM_path (str): path of the vLLM folder.
+
+    Returns:
+        list[tuple[str, str]]: list of tuples containing the absolute path and
+                               the content of the file.
+    """
     files_list: list[tuple[str, str]] = []
 
+    # Scan all files from the root, recursive for each folders.
     for (root, dirs, filesname) in os.walk(
         vLLM_path, topdown=True, onerror=True, followlinks=False):
-        # Ignore path
+
+        # IGNORED FILES OR FOLDERS
         dirs[:] = [d for d in dirs if d not in IGNORED_PATH]
 
         for file in filesname:
-            if (check_file_extension(file, '.py') or
-                    check_file_extension(file, '.md')):
+
+            # CHECK EXTENSION
+            for extension in EXTENSIONS_TO_CHECK:
+                if not check_file_extension(file, extension):
+                    continue
 
                 # Construct the filepath
                 filepath: str = os.path.join(root, file)

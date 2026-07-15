@@ -1,83 +1,69 @@
 # ************************************************************************* #
 #                                                                           #
 #                                                      :::      ::::::::    #
-#  engine.py                                         :+:      :+:    :+:    #
+#  RAG_engine.py                                     :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 12:49:48 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 10:39:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
-from src.indexer import indexer
 from src.utils import (
     is_folder_exist, is_file_exist, can_read_file, can_write_to_file,
     print_log
 )
-from src.indexer import files
+from src.config import Config
+from src.indexer import files, indexer
 
 
-DEFAULT_DATASET_PATH : str = (
-    'data/datasets/UnansweredQuestions/dataset_docs_public.json'
-)
-DEFAULT_STUDENT_ANSWER_PATH: str = (
-    'data/output/search_results/dataset_docs_public.json'
-)
-DEFAULT_STUDENT_SEARCH_RESULTS_PATH: str = (
-    'data/output/search_results/dataset_docs_public.json'
-)
-
-DEFAULT_SAVE_DIRECTORY: str = 'data/output/search_results'
-
-DEFAULT_VLLM_DIRECTORY: str = 'vllm-0.10.1'
-VLLM_ZIP: str = 'vllm-0.10.1.zip'
-
-INDEX_DIRECTORY: str = 'data/processed/'
-INDEX_BM25_DIRECTORY: str = 'data/processed/bm25_index'
-INDEX_CHUNKS_DIRECTORY: str = 'data/processed/chunks'
+LIST_DIRECTORY: dict[str, str] = {
+    'index_dir': Config.INDEX_DIRECTORY,
+    'bm25_dir': Config.INDEX_BM25_DIRECTORY,
+    'chunk_dir': Config.INDEX_CHUNKS_DIRECTORY
+}
 
 
 class RAGEngine():
 
     def index(
         self,
-        vLLM_directory: str = DEFAULT_VLLM_DIRECTORY,
+        vLLM_directory: str = Config.DEFAULT_VLLM_DIRECTORY,
         max_chunk_size: int = 2000
     ) -> None:
         # - SECURITY -
         if max_chunk_size <= 0:
             raise ValueError("Chunk size need to be superior than 0.")
 
-        # Check for the vLLM zip or directory
-        if not is_file_exist(VLLM_ZIP):
+        # - SECURITY -
+        # If vLLM zip or folder do not exist. Stop the program here.
+        if not is_file_exist(Config.VLLM_ZIP):
             if not is_folder_exist(vLLM_directory):
                 raise ValueError(
                     "vLLM zip or folder not found. Download it first and then"
                     "re-run the program.")
 
+        # If folder not found, extract the archive. Otherwise, use the existing
+        # folder.
         elif not is_folder_exist(vLLM_directory):
-            files.extract_archive(VLLM_ZIP)
+            files.extract_archive(Config.VLLM_ZIP)
         else:
             if not can_read_file(vLLM_directory):
                 raise ValueError(
                     f"Error while trying to open {vLLM_directory}")
 
-        # Check path for the processed data
-        list_directory: dict[str, str] = {
-            'index_dir': INDEX_DIRECTORY,
-            'bm25_dir': INDEX_BM25_DIRECTORY,
-            'chunk_dir': INDEX_CHUNKS_DIRECTORY
-        }
-
-        for dir in list_directory.values():
+        # Check that folders doesn't exist. If not, create them.
+        for dir in LIST_DIRECTORY.values():
             _check_path(dir, True)
 
-        indexer(vLLM_directory, max_chunk_size, list_directory)
+        # Launch the indexer
+        indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
         print_log(
-            f"Ingestion complete! Indices saved under '{INDEX_DIRECTORY}'"
+            "Ingestion complete! Indices saved under "
+            f"'{Config.INDEX_DIRECTORY}'"
         )
 
     def search(self,k: int = 10,) -> None:
@@ -85,9 +71,9 @@ class RAGEngine():
 
     def search_dataset (
         self,
-        dataset_path: str = DEFAULT_DATASET_PATH,
+        dataset_path: str = Config.DEFAULT_DATASET_PATH,
         k: int = 10,
-        save_directory: str = DEFAULT_SAVE_DIRECTORY
+        save_directory: str = Config.DEFAULT_SAVE_DIRECTORY
     ) -> None:
         # Check paths
         _check_path(dataset_path)
@@ -98,8 +84,9 @@ class RAGEngine():
 
     def answer_dataset(
         self,
-        student_search_results_path: str = DEFAULT_STUDENT_SEARCH_RESULTS_PATH,
-        save_directory: str = DEFAULT_SAVE_DIRECTORY
+        student_search_results_path: str = (
+            Config.DEFAULT_STUDENT_SEARCH_RESULTS_PATH),
+        save_directory: str = Config.DEFAULT_SAVE_DIRECTORY
     ) -> None:
         # Check paths
         _check_path(student_search_results_path)
@@ -107,8 +94,8 @@ class RAGEngine():
 
     def evaluate_student_search_results(
         self,
-        student_answer_path: str = DEFAULT_STUDENT_ANSWER_PATH,
-        dataset_path: str = DEFAULT_DATASET_PATH,
+        student_answer_path: str = Config.DEFAULT_STUDENT_ANSWER_PATH,
+        dataset_path: str = Config.DEFAULT_DATASET_PATH,
         k: int = 10,
         max_context_lenght: int = 2000
     ) -> None:
@@ -123,6 +110,19 @@ class RAGEngine():
 
 
 def _check_path(raw_path: str, is_directory: bool = False) -> None:
+    """Path checker for a file or a folder.
+
+    Take the raw path of transform it to a 'Path' object. Create the folders
+    parents if they do not exist, then the file or the path. If one of these
+    already exist, check for the permission.
+
+    Args:
+        raw_path (str): raw path of the folder or file.
+        is_directory (bool, optional): If is a folder. Defaults to False.
+
+    Raises:
+        ValueError: If an error occurred with permissions.
+    """
     path: pathlib.Path = pathlib.Path(raw_path)
 
     # Create the folders if they do not exist
