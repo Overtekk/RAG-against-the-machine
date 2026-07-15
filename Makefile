@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 11:54:21 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 12:27:21 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -87,7 +87,7 @@ clean:
 					find . -type f -name "*.pyo" -delete
 					rm -rf .mypy_cache
 					rm -rf .pytest_cache
-					rm -rf data/processed
+					rm -rf data/
 
 fclean:				clean
 					@echo "$(YELLOW)Cleaning .venv, build and dist folder... 🗑️$(RESET)"

@@ -120,7 +120,9 @@ This project must have a Makefile and the following rules:
 | [KMWLLC - TF-IDF vs BM25](https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/) | Introduction to TF-IDF and BM25 and comparaison between both |
 | [Huggingface - BM25s](https://huggingface.co/blog/xhluca/bm25s) | How to implement and use the BM25S |
 | [Github - BM25S](https://github.com/xhluca/bm25s) | Github of the BM25S repo |
-| [Documentation for `langchain`](https://docs.langchain.com/oss/python/integrations/splitters) | Documentation for using `langchain-text-splitters` |
+| [Documentation for `langchain` - text splitter](https://docs.langchain.com/oss/python/integrations/splitters) | Documentation for using `langchain-text-splitters` using to chunk markdown and texts files|
+| [Documentation for `langchain` - code splitter](https://docs.langchain.com/oss/python/integrations/splitters/code_splitter) | Documentation for using `langchain-text-splitters` using to chunk python files (or other programmation language) |
+
 
 ### Specific Libraries Documentation
 | Resource | Description |

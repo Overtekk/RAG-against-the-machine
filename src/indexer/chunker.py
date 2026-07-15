@@ -6,22 +6,13 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 14:14:02 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 14:22:04 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-from langchain_text_splitters import (
-    MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter)
+from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from src.model import MinimalSource
 from src.utils import check_file_extension, print_log
-
-
-headers_to_split_on = [
-        ("#", "Header 1"),
-        ("##", "Header 2"),
-        ("###", "Header 3"),
-        ("####", "Header 4"),
-    ]
 
 
 class ChunkerEngine():
@@ -45,24 +36,43 @@ class ChunkerEngine():
 
     def _chunk_py_file(
         self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
-        return []
+        python_splitter = RecursiveCharacterTextSplitter.from_language(
+            language=Language.PYTHON,
+            chunk_size=self._chunk_size,
+            chunk_overlap=0
+        )
+
+        return self._split_text(python_splitter, file_path, content)
 
     def _chunk_md_file(
         self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
-        chunked_txt: list[tuple[MinimalSource, str]] = []
-
+        # Split the text based on the chunk size. Keep all seperators
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self._chunk_size,
             chunk_overlap=0,
             keep_separator=True
         )
 
-        sub_search_start = 0
-        for sub_txt in text_splitter.split_text(content):
-            sub_first_index = content.find(sub_txt, sub_search_start)
-            sub_last_index = sub_first_index + len(sub_txt)
-            sub_search_start = sub_last_index
+        return self._split_text(text_splitter, file_path, content)
 
+    def _split_text(
+        self,
+        text_splitter: RecursiveCharacterTextSplitter,
+        file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
+        # Create the index and the list
+        index: int = 0
+        chunked_txt: list[tuple[MinimalSource, str]] = []
+
+        # Split the text into small chunks
+        for sub_txt in text_splitter.split_text(content):
+            # Find the first index of the chunk
+            sub_first_index = content.find(sub_txt, index)
+            # Find the last index of the chunk
+            sub_last_index = sub_first_index + len(sub_txt)
+            # Update the index
+            index = sub_last_index
+
+            # Add the chunk to the list as MinimalSource
             chunked_txt.append((MinimalSource(
                 file_path=file_path,
                 first_character_index=sub_first_index,
@@ -71,51 +81,3 @@ class ChunkerEngine():
 
         return chunked_txt
 
-# chunked_txt: list[tuple[MinimalSource, str]] = []
-# curr_index: int = 0
-
-# # Split the content with the header
-# markdown_splitter = MarkdownHeaderTextSplitter(
-#     headers_to_split_on=headers_to_split_on, strip_headers=False
-# )
-# md_header_splits = markdown_splitter.split_text(content)
-
-# # Get the index
-# for split in md_header_splits:
-#     raw_text = split.page_content
-
-#     first_char_index = content.find(raw_text, curr_index)
-
-#     # Get the last index
-#     last_char_index = first_char_index + len(raw_text)
-#     curr_index = last_char_index
-
-#     # Check the chunk_size
-#     if len(raw_text) <= self._chunk_size:
-#         chunked_txt.append((MinimalSource(
-#             file_path=file_path,
-#             first_character_index=first_char_index,
-#             last_character_index=last_char_index), raw_text)
-#         )
-
-#     else:
-#         text_splitter = RecursiveCharacterTextSplitter(
-#             chunk_size=self._chunk_size,
-#             chunk_overlap=0,
-#             keep_separator=True
-#         )
-#         sub_search_start = first_char_index
-
-#         for sub_txt in text_splitter.split_text(raw_text):
-#             sub_first_index = content.find(sub_txt, sub_search_start)
-#             sub_last_index = sub_first_index + len(sub_txt)
-
-#             sub_search_start = sub_last_index
-
-#             chunked_txt.append((MinimalSource(
-#                 file_path=file_path,
-#                 first_character_index=sub_first_index,
-#                 last_character_index=sub_last_index), sub_txt)
-#             )
-
-# return chunked_txt

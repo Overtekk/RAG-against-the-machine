@@ -6,20 +6,21 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 11:57:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 12:27:57 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
 from src.utils import (
     is_folder_exist, is_file_exist, check_perm_can_read, check_perm_can_write,
-    print_log, func_timer
+    print_log, print_with_color, func_timer
 )
 from src.config import Config
 from src.indexer import files, indexer
 
 
 LIST_DIRECTORY: dict[str, str] = {
+    'vllm_dir': Config.DEFAULT_VLLM_DIRECTORY,
     'index_dir': Config.INDEX_DIRECTORY,
     'bm25_dir': Config.INDEX_BM25_DIRECTORY,
     'chunk_dir': Config.INDEX_CHUNKS_DIRECTORY
@@ -63,9 +64,9 @@ class RAGEngine():
             'yellow')
         indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
-        print_log(
-            "Ingestion complete! Indices saved under "
-            f"'{Config.INDEX_DIRECTORY}'"
+        print_with_color(
+            "\nIngestion complete! Indices saved under "
+            f"'{Config.INDEX_DIRECTORY}'", 'green'
         )
 
     def search(self,k: int = 10,) -> None:

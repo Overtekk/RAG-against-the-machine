@@ -6,14 +6,15 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:10:08 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 12:46:44 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
+import json
+import os
 import bm25s
 import Stemmer
 from tqdm import tqdm
-
 from .files import load_files
 from .chunker import ChunkerEngine
 from src.utils import print_log, print_rule
@@ -49,6 +50,43 @@ def indexer(
                 metadatas_list.append(metadata.model_dump())
                 texts_list.append(raw_text)
 
+    # - Save the chunks -
+    _saving_chunks(metadatas_list, texts_list, data_directory)
+
+    # - Build the index -
+    _build_index(metadatas_list, texts_list, data_directory)
+
+
+def _saving_chunks(
+    metadatas_list: list[MinimalSource],
+    texts_list: list[str],
+    data_directory: dict[str, str]) -> None:
+    print_rule()
+    print("Saving raw chunks dataset...")
+
+    # Create the structure of the json
+    chunks_dataset: list[dict[str, str]] = []
+    for metadata, raw_text in zip(metadatas_list, texts_list):
+        chunks_dataset.append({
+            "file_path": metadata["file_path"],
+            "first_character_index": metadata["first_character_index"],
+            "last_character_index": metadata["last_character_index"],
+            "content": raw_text
+        })
+
+    # Saving the structure in a json file
+    chunks_file_path = os.path.join(data_directory['chunk_dir'],
+                                    'chunks_db.json')
+
+    with open(chunks_file_path, 'w', encoding='utf-8') as f:
+        json.dump(chunks_dataset, f, ensure_ascii=False, indent=4)
+
+    print_log(f"Chunks database saved under '{chunks_file_path}'")
+
+def _build_index(
+    metadatas_list: list[MinimalSource],
+    texts_list: list[str],
+    data_directory: dict[str, str]) -> None:
     # Create a stemmer (get the root of multiples same words)
     stemmer = Stemmer.Stemmer('english')
 
@@ -62,9 +100,10 @@ def indexer(
         leave=True
     )
     # Index the corpus
-    retriever.index(tokens)
+    retriever.index(tokens, show_progress=True, leave_progress=True)
     # Save the array and the corpus
-    retriever.save(data_directory['bm25_dir'], corpus=metadatas_list)
+    retriever.save(
+        data_directory['bm25_dir'], corpus=metadatas_list, show_progress=True)
 
     print_rule()
     print_log(f"BM25 index saved in '{data_directory['bm25_dir']}'.")
