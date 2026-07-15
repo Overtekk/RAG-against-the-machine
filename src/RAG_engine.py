@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 10:39:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 11:47:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -28,14 +28,12 @@ LIST_DIRECTORY: dict[str, str] = {
 
 class RAGEngine():
 
-    def index(
-        self,
-        vLLM_directory: str = Config.DEFAULT_VLLM_DIRECTORY,
-        max_chunk_size: int = 2000
-    ) -> None:
+    def index(self, max_chunk_size: int = 2000) -> None:
         # - SECURITY -
         if max_chunk_size <= 0:
             raise ValueError("Chunk size need to be superior than 0.")
+
+        vLLM_directory: str = Config.DEFAULT_VLLM_DIRECTORY
 
         # - SECURITY -
         # If vLLM zip or folder do not exist. Stop the program here.
@@ -59,6 +57,9 @@ class RAGEngine():
             _check_path(dir, True)
 
         # Launch the indexer
+        print_log(
+            f"Starting the indexing with chunk size of {max_chunk_size}\n",
+            'yellow')
         indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
         print_log(

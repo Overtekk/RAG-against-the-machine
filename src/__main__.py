@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 10:40:28 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 10:57:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -33,6 +33,7 @@ def main() -> int:
         # argument.
         fire.Fire(RAGEngine)
 
+        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
         return 0
 
     except ValueError as e:

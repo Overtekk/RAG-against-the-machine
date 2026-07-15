@@ -6,13 +6,14 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/13 12:51:36 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 11:47:30 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 # ===================
 # =		VARIABLES	=
 # ===================
+# -- Base python commands --
 PYTHON			=	python3
 PDB 			=	python3 -m pdb
 UV_PYTHON		=	uv run python
@@ -22,9 +23,15 @@ MYPY_FLAGS		=	--warn-return-any --warn-unused-ignores --ignore-missing-imports -
 INSTALL_UV		=	curl -LsSf https://astral.sh/uv/install.sh | sh
 CHECK_UV		=	command -v uv
 
+# -- Files & Folders --
 SRC				=	src
 LINT_TESTER		=	$(SRC) \
 					test
+
+RUN				=	$(UV_PYTHON) -m $(SRC)
+
+# -- Index command --
+max_chunk_size 	?=	2000
 
 
 # ===================
@@ -35,74 +42,81 @@ LINT_TESTER		=	$(SRC) \
 			index, answer, search, eval, answer_dataset
 .SILENT:
 
-all:		install run
+all:				install run
 
 install:
-			@if	! $(CHECK_UV) > /dev/null 2>&1; then \
-					echo "$(BRED)UV not installed. Installing...$(RESET)"; \
-					$(INSTALL_UV); \
-			fi
-			@echo "$(BGREEN)Installing project dependencies using uv...$(RESET)"
-			$(UV_SKIP_WHEEL) uv sync $(UV_WARN)
+					@if	! $(CHECK_UV) > /dev/null 2>&1; then \
+							echo "$(BRED)UV not installed. Installing...$(RESET)"; \
+							$(INSTALL_UV); \
+					fi
+					@echo "$(BGREEN)Installing project dependencies using uv...$(RESET)"
+					$(UV_SKIP_WHEEL) uv sync $(UV_WARN)
 
-run:		install
-			$(UV_PYTHON) -m $(SRC)
+run:				install
+					@clear
+					$(RUN)
 
-index:		install
-			$(UV_PYTHON) -m $(SRC) index
+index:				install
+					@clear
+					$(RUN) index --vLLM_directory=$(vLLM_dir) --max_chunk_size=$(max_chunk_size)
 
-answer:		install
-			$(UV_PYTHON) -m $(SRC) answer
+answer:				install
+					@clear
+					$(RUN) answer
 
-search:		install
-			$(UV_PYTHON) -m $(SRC) search_dataset
+search:				install
+					@clear
+					$(RUN) search_dataset
 
-eval:		install
-			$(UV_PYTHON) -m $(SRC) evaluate_student_search_results
+eval:				install
+					@clear
+					$(RUN) evaluate_student_search_results
 
 answer_dataset:		install
-					$(UV_PYTHON) -m $(SRC) answer_dataset
+					@clear
+					$(RUN) answer_dataset
 
-run-debug:	install
-			$(UV_PYTHON) pac-man.py $(CONFIG) --debug
+run-debug:			install
+					@clear
+					$(RUN)
 
 clean:
-			@echo "$(YELLOW)Cleaning temporary files, and caches... 🗑️$(RESET)"
-			find . -type d -name "__pycache__" -exec rm -rf {} +
-			find . -type f -name "*.pyc" -delete
-			find . -type f -name "*.pyo" -delete
-			rm -rf .mypy_cache
-			rm -rf .pytest_cache
-			rm -rf data/processed
+					@echo "$(YELLOW)Cleaning temporary files, caches and data... 🗑️$(RESET)"
+					find . -type d -name "__pycache__" -exec rm -rf {} +
+					find . -type f -name "*.pyc" -delete
+					find . -type f -name "*.pyo" -delete
+					rm -rf .mypy_cache
+					rm -rf .pytest_cache
+					rm -rf data/processed
 
-fclean:		clean
-			@echo "$(YELLOW)Cleaning .venv, build and dist folder... 🗑️$(RESET)"
-			rm -rf .venv
-			rm -rf dist
+fclean:				clean
+					@echo "$(YELLOW)Cleaning .venv, build and dist folder... 🗑️$(RESET)"
+					rm -rf .venv
+					rm -rf dist
 
 lint:
-			@clear
-			@echo "$(BMAGENTA)Running standard linting...$(RESET)"
-			@status=0; \
-			$(UV_FLAKE8) $(LINT_TESTER) || status=$$?; \
-			$(UV_MYPY) $(LINT_TESTER) $(MYPY_FLAGS) || status=$$?; \
-			exit $$status
+					@clear
+					@echo "$(BMAGENTA)Running standard linting...$(RESET)"
+					@status=0; \
+					$(UV_FLAKE8) $(LINT_TESTER) || status=$$?; \
+					$(UV_MYPY) $(LINT_TESTER) $(MYPY_FLAGS) || status=$$?; \
+					exit $$status
 
 lint-strict:
-			@clear
-			@echo "$(BMAGENTA)Running strict linting...$(RESET)"
-			@status=0; \
-			$(UV_FLAKE8) $(LINT_TESTER) || status=$$?; \
-			$(UV_MYPY) $(LINT_TESTER) $(MYPY_FLAGS) --strict || status=$$?; \
-			exit $$status
+					@clear
+					@echo "$(BMAGENTA)Running strict linting...$(RESET)"
+					@status=0; \
+					$(UV_FLAKE8) $(LINT_TESTER) || status=$$?; \
+					$(UV_MYPY) $(LINT_TESTER) $(MYPY_FLAGS) --strict || status=$$?; \
+					exit $$status
 
 delete-uv:
-			@if $(CHECK_UV) > /dev/null 2>&1; then \
-					echo "$(BRED)Deleting uv...$(RESET)"; \
-					rm -f $$(which uv); \
-			else \
-					echo "$(BRED)UV not installed. Cannot delete. Abording.$(RESET)"; \
-			fi
+					@if $(CHECK_UV) > /dev/null 2>&1; then \
+							echo "$(BRED)Deleting uv...$(RESET)"; \
+							rm -f $$(which uv); \
+					else \
+							echo "$(BRED)UV not installed. Cannot delete. Abording.$(RESET)"; \
+					fi
 
 # ===================
 # =		COLORS		=

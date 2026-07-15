@@ -1,1 +1,1 @@
-- Crash when using `uv run python -m src index 2`
+- Crash when using `uv run python -m src index 2` ✅ -> remove the argument for the vlMM using the default path or zip only
