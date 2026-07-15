@@ -6,14 +6,14 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 11:52:49 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 11:57:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
 from src.utils import (
     is_folder_exist, is_file_exist, check_perm_can_read, check_perm_can_write,
-    print_log
+    print_log, func_timer
 )
 from src.config import Config
 from src.indexer import files, indexer
@@ -28,6 +28,7 @@ LIST_DIRECTORY: dict[str, str] = {
 
 class RAGEngine():
 
+    @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
         # - SECURITY -
         if max_chunk_size <= 0:

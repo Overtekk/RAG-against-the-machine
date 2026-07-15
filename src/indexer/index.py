@@ -6,11 +6,12 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 10:25:12 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 12:10:08 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import bm25s
+import Stemmer
 from tqdm import tqdm
 
 from .files import load_files
@@ -48,12 +49,22 @@ def indexer(
                 metadatas_list.append(metadata.model_dump())
                 texts_list.append(raw_text)
 
+    # Create a stemmer (get the root of multiples same words)
+    stemmer = Stemmer.Stemmer('english')
+
     # - Constructing the index -
     print_rule()
-    retriever = bm25s.BM25(corpus=metadatas_list)
-    tokens = bm25s.tokenize(texts_list, show_progress=True, leave=True)
+    # Create the BM25 model
+    retriever = bm25s.BM25()
+    # Tokenize the corpus and only keep the ids
+    tokens = bm25s.tokenize(
+        texts_list, stopwords='en', stemmer=stemmer, show_progress=True,
+        leave=True
+    )
+    # Index the corpus
     retriever.index(tokens)
-    retriever.save(data_directory['bm25_dir'])
+    # Save the array and the corpus
+    retriever.save(data_directory['bm25_dir'], corpus=metadatas_list)
 
     print_rule()
     print_log(f"BM25 index saved in '{data_directory['bm25_dir']}'.")
