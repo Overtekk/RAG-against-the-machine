@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 11:47:30 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 11:54:21 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -58,7 +58,7 @@ run:				install
 
 index:				install
 					@clear
-					$(RUN) index --vLLM_directory=$(vLLM_dir) --max_chunk_size=$(max_chunk_size)
+					$(RUN) index --max_chunk_size=$(max_chunk_size)
 
 answer:				install
 					@clear

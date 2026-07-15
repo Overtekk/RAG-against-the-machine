@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 13:40:01 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/01 13:26:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/15 11:54:07 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -72,7 +72,7 @@ def check_file_extension(file: pathlib.Path | str, extension: str) -> bool:
     return file.suffix == extension
 
 
-def can_read_file(file: pathlib.Path | str) -> bool:
+def check_perm_can_read(path: pathlib.Path | str) -> bool:
     """
     Check if a file have the permission to be read
 
@@ -82,13 +82,13 @@ def can_read_file(file: pathlib.Path | str) -> bool:
     Returns:
         bool: True if the file have the read permission, False otherwise.
     """
-    if not isinstance(file, pathlib.Path):
-        file = pathlib.Path(file)
+    if not isinstance(path, pathlib.Path):
+        path = pathlib.Path(path)
 
-    return os.access(file, os.R_OK)
+    return os.access(path, os.R_OK)
 
 
-def can_write_to_file(file: pathlib.Path | str) -> bool:
+def check_perm_can_write(path: pathlib.Path | str) -> bool:
     """
     Check if a file have the permission to be writted
 
@@ -98,13 +98,13 @@ def can_write_to_file(file: pathlib.Path | str) -> bool:
     Returns:
         bool: True if the file have the write permission, False otherwise.
     """
-    if not isinstance(file, pathlib.Path):
-        file = pathlib.Path(file)
+    if not isinstance(path, pathlib.Path):
+        path = pathlib.Path(path)
 
-    return os.access(file, os.W_OK)
+    return os.access(path, os.W_OK)
 
 
-def can_execute_file(file: pathlib.Path | str) -> bool:
+def check_perm_can_execute(path: pathlib.Path | str) -> bool:
     """
     Check if a file have the permission to be executed
 
@@ -114,10 +114,10 @@ def can_execute_file(file: pathlib.Path | str) -> bool:
     Returns:
         bool: True if the file have the execution permission, False otherwise.
     """
-    if not isinstance(file, pathlib.Path):
-        file = pathlib.Path(file)
+    if not isinstance(path, pathlib.Path):
+        path = pathlib.Path(path)
 
-    return os.access(file, os.X_OK)
+    return os.access(path, os.X_OK)
 
 
 # :---------:
