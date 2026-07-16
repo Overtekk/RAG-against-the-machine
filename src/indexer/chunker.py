@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 14:22:04 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/16 21:19:32 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,8 +21,9 @@ class ChunkerEngine():
 
     def process(
         self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
-        if check_file_extension(file_path, '.md'):
-            return self._chunk_md_file(file_path, content)
+        if (check_file_extension(file_path, '.md') or
+                check_file_extension(file_path, '.txt')):
+            return self._chunk_txt_file(file_path, content)
 
         elif check_file_extension(file_path, '.py'):
             return self._chunk_py_file(file_path, content)
@@ -44,7 +45,7 @@ class ChunkerEngine():
 
         return self._split_text(python_splitter, file_path, content)
 
-    def _chunk_md_file(
+    def _chunk_txt_file(
         self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
         # Split the text based on the chunk size. Keep all seperators
         text_splitter = RecursiveCharacterTextSplitter(

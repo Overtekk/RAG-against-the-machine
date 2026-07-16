@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:46:44 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/16 21:16:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,7 +15,7 @@ import os
 import bm25s
 import Stemmer
 from tqdm import tqdm
-from .files import load_files
+from .utils import load_files
 from .chunker import ChunkerEngine
 from src.utils import print_log, print_rule
 from src.model import MinimalSource

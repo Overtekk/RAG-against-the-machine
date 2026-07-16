@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:27:57 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/16 21:16:50 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,7 +16,7 @@ from src.utils import (
     print_log, print_with_color, func_timer
 )
 from src.config import Config
-from src.indexer import files, indexer
+from src.indexer import indexer, utils
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -48,7 +48,7 @@ class RAGEngine():
         # If folder not found, extract the archive. Otherwise, use the existing
         # folder.
         elif not is_folder_exist(vLLM_directory):
-            files.extract_archive(Config.VLLM_ZIP)
+            utils.extract_archive(Config.VLLM_ZIP)
         else:
             if not check_perm_can_read(vLLM_directory):
                 raise ValueError(
