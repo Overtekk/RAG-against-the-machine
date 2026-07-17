@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 14:28:33 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 14:54:00 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -115,9 +115,23 @@ class RAGEngine():
         k: int = 10,
         save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY
     ) -> None:
+        # - SECURITY -
+        try:
+            _check_value_range(
+                k, RAGConfig.MIN_K_CHUNKS, RAGConfig.MAX_K_CHUNKS,
+                'number of results'
+            )
+        except RAGError as e:
+            raise ValueError(e)
         # Check paths
         _check_path(dataset_path)
         _check_path(save_directory, True)
+
+        try:
+            retriever = RetrieverEngine(k, LIST_DIRECTORY)
+
+        except RAGError as e:
+            raise ValueError(e)
 
     def answer(self, query: str, k: int = 10) -> None:
         pass
