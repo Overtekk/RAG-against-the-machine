@@ -108,35 +108,37 @@ This project must have a Makefile and the following rules:
 
 ## 📚 Resources
 
-### Global Documentation
+### 📝 Global Documentation
 | Resource | Description |
 | :------: | :---------: |
-| [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is |
-| [Blog - Stephane Robert (fr)](https://blog.stephane-robert.info/docs/developper/programmation/python/rag-introduction/) | How to make a RAG |
+| [Wikipedia - RAG (fr)](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_%C3%A0_enrichissement_contextuel) | Global explanation to know what a RAG is. |
+| [Blog - Stephane Robert (fr)](https://blog.stephane-robert.info/docs/developper/programmation/python/rag-introduction/) | How to make a RAG. Complete documentation about how to build it. |
+| [Huggingface - Code a simple RAG from scratch](https://huggingface.co/blog/ngxson/make-your-own-rag) | Explanation of how to make a simple RAG. Useful to know simple things to make the RAG workings. |
 
-### Indexing Documentation
+### 📑 Documentation useful for the Indexing part
 | Resource | Description |
 | :------: | :---------: |
-| [KMWLLC - TF-IDF vs BM25](https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/) | Introduction to TF-IDF and BM25 and comparaison between both |
-| [Huggingface - BM25s](https://huggingface.co/blog/xhluca/bm25s) | How to implement and use the BM25S |
-| [Github - BM25S](https://github.com/xhluca/bm25s) | Github of the BM25S repo |
-| [Documentation for `langchain` - text splitter](https://docs.langchain.com/oss/python/integrations/splitters) | Documentation for using `langchain-text-splitters` using to chunk markdown and texts files|
-| [Documentation for `langchain` - code splitter](https://docs.langchain.com/oss/python/integrations/splitters/code_splitter) | Documentation for using `langchain-text-splitters` using to chunk python files (or other programmation language) |
+| [KMWLLC - TF-IDF vs BM25](https://kmwllc.com/index.php/2020/03/20/understanding-tf-idf-and-bm-25/) | Introduction to `TF-IDF` and `BM25` and comparaison between both. |
+| [Huggingface - BM25s](https://huggingface.co/blog/xhluca/bm25s) | How to implement and use the BM25S.  |
+| [Github - BM25S](https://github.com/xhluca/bm25s) | Github of the BM25S repo to know how to use it correctly. |
+| [Documentation for `langchain` - text splitter](https://docs.langchain.com/oss/python/integrations/splitters) | Documentation for using `langchain-text-splitters`: used to chunk markdown and text files.|
+| [Documentation for `langchain` - code splitter](https://docs.langchain.com/oss/python/integrations/splitters/code_splitter) | Documentation for using `langchain-text-splitters`: used to chunk python code file (and other programmation language). |
 
 
-### Specific Libraries Documentation
+### 🐍 Specific Libraries Documentation
 | Resource | Description |
 | :------: | :---------: |
-| [Github.io - Python Fire](https://google.github.io/python-fire/guide/) | Documentation about `Python Fire` |
-| [W3Schools - `os.walk`](https://www.w3schools.com/python/ref_os_walk.asp) | How to use `os.walk` |
+| [Github.io - Python Fire](https://google.github.io/python-fire/guide/) | Documentation about `Python Fire` for Command Line Interface. |
+| [W3Schools - `os.walk`](https://www.w3schools.com/python/ref_os_walk.asp) | How to use `os.walk` for the indexing part. |
 
-### Other
+### ✏️ Other
 | Resource | Description |
 | :------: | :---------: |
-| [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | Help with the project |
+| [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | 42 student repo helping me with the global architecture when stuck. |
 
 
 ### IA was use to:
-- todo
+- **As a teacher**: providing help when stuck and specify thing of the project, or subject I wasn't sure to understand. Giving me advices and tips and how to code some part, or for upgrading.
+- **As a debugger**: helping me debug when something isn't working and when I don't understand why after searching for a while.
 
 ---
