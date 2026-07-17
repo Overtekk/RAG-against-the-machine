@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/15 10:29:07 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 10:00:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 14:20:01 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -37,5 +37,11 @@ class PathConfig(str, Enum):
 class RAGConfig(IntEnum):
     MIN_CHUNK_SIZE = 0
     MAX_CHUNK_SIZE = 2000
-    MIN_N_CHUNKS = 0
-    MAX_N_CHUNKS = 1000
+    MIN_K_CHUNKS = 0
+    MAX_K_CHUNKS = 1000
+
+
+class RAGError(Exception):
+    """Custom class for RAGEngine related error.
+    """
+    pass

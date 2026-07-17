@@ -1,22 +1,24 @@
 # ************************************************************************* #
 #                                                                           #
 #                                                      :::      ::::::::    #
-#  RAG_engine.py                                     :+:      :+:    :+:    #
+#  RAGEngine.py                                      :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 10:29:42 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 14:28:33 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import pathlib
+from typing import Any
 from src.utils import (
     is_folder_exist, is_file_exist, check_perm_can_read, check_perm_can_write,
     print_log, print_with_color, func_timer
 )
-from src.config import PathConfig, RAGConfig
+from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
+from src.retriever import RetrieverEngine
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -32,12 +34,13 @@ class RAGEngine():
     @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
         # - SECURITY -
-        if not (RAGConfig.MIN_CHUNK_SIZE <= max_chunk_size
-                    < RAGConfig.MAX_CHUNK_SIZE):
-            raise ValueError(
-                f"Provide a chunk size superior to {RAGConfig.MIN_CHUNK_SIZE} "
-                f"and inferior to {RAGConfig.MAX_CHUNK_SIZE}"
-            )
+        try:
+            _check_value_range(
+                max_chunk_size,
+                RAGConfig.MIN_CHUNK_SIZE, RAGConfig.MAX_CHUNK_SIZE,
+                'max chunk size')
+        except RAGError as e:
+            raise ValueError(e)
 
         vLLM_directory: str = PathConfig.DEFAULT_VLLM_DIRECTORY
 
@@ -66,23 +69,45 @@ class RAGEngine():
         print_log(
             f"Starting the indexing with chunk size of {max_chunk_size}\n",
             'yellow')
-        indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
+        nb_chunks = indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
         print_with_color(
-            "\nIngestion complete! Indices saved under "
-            f"'{PathConfig.INDEX_DIRECTORY}'", 'green'
+            f"\nIngestion complete! Indexed {len(nb_chunks)} chunks in "
+            f"'{PathConfig.INDEX_CHUNKS_DIRECTORY}'.\nIndices saved under "
+            f"'{PathConfig.INDEX_BM25_DIRECTORY}'", 'green'
         )
 
+    @func_timer
     def search(self, query: str, k: int = 10,) -> None:
         # - SECURITY -
-        if not (RAGConfig.MIN_N_CHUNKS <= k < RAGConfig.MAX_N_CHUNKS):
-            raise ValueError(
-                "Provide a number of chunks to get above "
-                f"{RAGConfig.MIN_N_CHUNKS} and below {RAGConfig.MAX_N_CHUNKS}."
+        try:
+            _check_value_range(
+                k, RAGConfig.MIN_K_CHUNKS, RAGConfig.MAX_K_CHUNKS,
+                'number of results'
             )
+        except RAGError as e:
+            raise ValueError(e)
         if not query and not isinstance(query, str):
             raise ValueError("Please, provide a valid question.")
-        print(query)
+
+        # Init the retriever and retrieve the k best results
+        try:
+            retriever = RetrieverEngine(k, LIST_DIRECTORY)
+            print_log(f"Searching the best {k} documents for '{query}'")
+            result = retriever.retrieve(query)
+        except RAGError as e:
+            raise ValueError(e)
+
+        print_log("✅ Done\n", 'green')
+
+        # Go throught the result and print the final results
+        result_msg = ""
+        for index in result:
+            result_msg += (
+                f"{index['file_path']} [{index['first_character_index']}:"
+                f"{index['last_character_index']}]\n"
+            )
+        print(result_msg)
 
     def search_dataset (
         self,
@@ -160,3 +185,39 @@ def _check_path(raw_path: str, is_directory: bool = False) -> None:
             if (not check_perm_can_read(path) and
                     not check_perm_can_write(path)):
                 raise ValueError(f"Permission error for {path}")
+
+def _check_value_range(variable: Any, min: int, max: int, type_name: str) -> None:
+    """Check the range value of the variable.
+
+    Args:
+        variable (Any): variable to check.
+        min (int): minimal value range.
+        max (int): max value range.
+        type_name (str): name of the variable (for clear error message).
+
+    Raises:
+        RAGError: if the variable is not a integer.
+        RAGError: if the variable is outside range.
+    """
+    if not _check_if_int(variable):
+        raise RAGError(f"Provide a valid number for {type_name}.")
+
+    if not min < variable <= max:
+        raise RAGError(
+            f"Provide a {type_name} superior to {min} and inferior to {max}"
+        )
+
+def _check_if_int(variable: Any) -> bool:
+    """Check if the provided value is of type int.
+
+    Args:
+        variable (Any): the variable to check.
+
+    Returns:
+        bool: False if not an int. True otherwise.
+    """
+    try:
+        int(variable)
+    except ValueError:
+        return False
+    return True

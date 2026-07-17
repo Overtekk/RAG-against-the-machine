@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 10:57:14 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 12:03:12 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,7 +14,7 @@ import sys
 import fire
 
 from src.utils import print_error, print_with_color
-from .RAG_engine import RAGEngine
+from .RAGEngine import RAGEngine
 
 
 def main() -> int:

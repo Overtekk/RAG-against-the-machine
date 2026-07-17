@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 10:28:09 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 12:05:11 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -65,7 +65,7 @@ index:				install
 
 search:				install
 					@clear
-					$(RUN) search --query=$(query) --k=$(k)
+					$(RUN) search --query="$(query)" --k=$(k)
 
 search_dataset:		install
 					@clear

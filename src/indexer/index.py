@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 09:58:43 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 13:32:24 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,13 +16,13 @@ import bm25s
 import Stemmer
 from tqdm import tqdm
 from .utils import load_files
-from .chunker import ChunkerEngine
+from .ChunkerEngine import ChunkerEngine
 from src.utils import print_log, print_rule
 from src.model import MinimalSource
 
 
 def indexer(
-    vLLM_path: str, chunk_size: int, data_directory: dict[str, str]) -> None:
+    vLLM_path: str, chunk_size: int, data_directory: dict[str, str]) -> int:
 
     # - Load all files -
     print_log(f"Reading files in '{vLLM_path}'...")
@@ -51,16 +51,18 @@ def indexer(
                 texts_list.append(raw_text)
 
     # - Save the chunks -
-    _saving_chunks(metadatas_list, texts_list, data_directory)
+    nb_chunks = _saving_chunks(metadatas_list, texts_list, data_directory)
 
     # - Build the index -
     _build_index(metadatas_list, texts_list, data_directory)
+
+    return nb_chunks
 
 
 def _saving_chunks(
     metadatas_list: list[MinimalSource],
     texts_list: list[str],
-    data_directory: dict[str, str]) -> None:
+    data_directory: dict[str, str]) -> int:
     print_rule()
     print("Saving raw chunks dataset...")
 
@@ -86,6 +88,7 @@ def _saving_chunks(
         json.dump(chunks_dataset, f, ensure_ascii=False, indent=4)
 
     print_log(f"Chunks database saved under '{chunks_file_path}'")
+    return (chunks_dataset)
 
 def _build_index(
     metadatas_list: list[MinimalSource],
