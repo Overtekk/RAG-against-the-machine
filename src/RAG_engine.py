@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/16 21:16:50 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 10:29:42 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,15 +15,15 @@ from src.utils import (
     is_folder_exist, is_file_exist, check_perm_can_read, check_perm_can_write,
     print_log, print_with_color, func_timer
 )
-from src.config import Config
+from src.config import PathConfig, RAGConfig
 from src.indexer import indexer, utils
 
 
 LIST_DIRECTORY: dict[str, str] = {
-    'vllm_dir': Config.DEFAULT_VLLM_DIRECTORY,
-    'index_dir': Config.INDEX_DIRECTORY,
-    'bm25_dir': Config.INDEX_BM25_DIRECTORY,
-    'chunk_dir': Config.INDEX_CHUNKS_DIRECTORY
+    'vllm_dir': PathConfig.DEFAULT_VLLM_DIRECTORY,
+    'index_dir': PathConfig.INDEX_DIRECTORY,
+    'bm25_dir': PathConfig.INDEX_BM25_DIRECTORY,
+    'chunk_dir': PathConfig.INDEX_CHUNKS_DIRECTORY
 }
 
 
@@ -32,14 +32,18 @@ class RAGEngine():
     @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
         # - SECURITY -
-        if max_chunk_size <= 0:
-            raise ValueError("Chunk size need to be superior than 0.")
+        if not (RAGConfig.MIN_CHUNK_SIZE <= max_chunk_size
+                    < RAGConfig.MAX_CHUNK_SIZE):
+            raise ValueError(
+                f"Provide a chunk size superior to {RAGConfig.MIN_CHUNK_SIZE} "
+                f"and inferior to {RAGConfig.MAX_CHUNK_SIZE}"
+            )
 
-        vLLM_directory: str = Config.DEFAULT_VLLM_DIRECTORY
+        vLLM_directory: str = PathConfig.DEFAULT_VLLM_DIRECTORY
 
         # - SECURITY -
         # If vLLM zip or folder do not exist. Stop the program here.
-        if not is_file_exist(Config.VLLM_ZIP):
+        if not is_file_exist(PathConfig.VLLM_ZIP):
             if not is_folder_exist(vLLM_directory):
                 raise ValueError(
                     "vLLM zip or folder not found. Download it first and then"
@@ -48,7 +52,7 @@ class RAGEngine():
         # If folder not found, extract the archive. Otherwise, use the existing
         # folder.
         elif not is_folder_exist(vLLM_directory):
-            utils.extract_archive(Config.VLLM_ZIP)
+            utils.extract_archive(PathConfig.VLLM_ZIP)
         else:
             if not check_perm_can_read(vLLM_directory):
                 raise ValueError(
@@ -66,30 +70,38 @@ class RAGEngine():
 
         print_with_color(
             "\nIngestion complete! Indices saved under "
-            f"'{Config.INDEX_DIRECTORY}'", 'green'
+            f"'{PathConfig.INDEX_DIRECTORY}'", 'green'
         )
 
-    def search(self,k: int = 10,) -> None:
-        pass
+    def search(self, query: str, k: int = 10,) -> None:
+        # - SECURITY -
+        if not (RAGConfig.MIN_N_CHUNKS <= k < RAGConfig.MAX_N_CHUNKS):
+            raise ValueError(
+                "Provide a number of chunks to get above "
+                f"{RAGConfig.MIN_N_CHUNKS} and below {RAGConfig.MAX_N_CHUNKS}."
+            )
+        if not query and not isinstance(query, str):
+            raise ValueError("Please, provide a valid question.")
+        print(query)
 
     def search_dataset (
         self,
-        dataset_path: str = Config.DEFAULT_DATASET_PATH,
+        dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
         k: int = 10,
-        save_directory: str = Config.DEFAULT_SAVE_DIRECTORY
+        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY
     ) -> None:
         # Check paths
         _check_path(dataset_path)
         _check_path(save_directory, True)
 
-    def answer(self, prompt: str, k: int = 10) -> None:
+    def answer(self, query: str, k: int = 10) -> None:
         pass
 
     def answer_dataset(
         self,
         student_search_results_path: str = (
-            Config.DEFAULT_STUDENT_SEARCH_RESULTS_PATH),
-        save_directory: str = Config.DEFAULT_SAVE_DIRECTORY
+            PathConfig.DEFAULT_STUDENT_SEARCH_RESULTS_PATH),
+        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY
     ) -> None:
         # Check paths
         _check_path(student_search_results_path)
@@ -97,8 +109,8 @@ class RAGEngine():
 
     def evaluate_student_search_results(
         self,
-        student_answer_path: str = Config.DEFAULT_STUDENT_ANSWER_PATH,
-        dataset_path: str = Config.DEFAULT_DATASET_PATH,
+        student_answer_path: str = PathConfig.DEFAULT_STUDENT_ANSWER_PATH,
+        dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
         k: int = 10,
         max_context_lenght: int = 2000
     ) -> None:

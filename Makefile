@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:27:21 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 10:28:09 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -32,6 +32,9 @@ RUN				=	$(UV_PYTHON) -m $(SRC)
 
 # -- Index command --
 max_chunk_size 	?=	2000
+# -- Search command --
+query			?=
+k				?= 10
 
 
 # ===================
@@ -60,21 +63,25 @@ index:				install
 					@clear
 					$(RUN) index --max_chunk_size=$(max_chunk_size)
 
+search:				install
+					@clear
+					$(RUN) search --query=$(query) --k=$(k)
+
+search_dataset:		install
+					@clear
+					$(RUN) search_dataset
+
 answer:				install
 					@clear
 					$(RUN) answer
 
-search:				install
+answer_dataset:		install
 					@clear
-					$(RUN) search_dataset
+					$(RUN) answer_dataset
 
 eval:				install
 					@clear
 					$(RUN) evaluate_student_search_results
-
-answer_dataset:		install
-					@clear
-					$(RUN) answer_dataset
 
 run-debug:			install
 					@clear

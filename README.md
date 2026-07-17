@@ -130,6 +130,7 @@ This project must have a Makefile and the following rules:
 | :------: | :---------: |
 | [Github.io - Python Fire](https://google.github.io/python-fire/guide/) | Documentation about `Python Fire` for Command Line Interface. |
 | [W3Schools - `os.walk`](https://www.w3schools.com/python/ref_os_walk.asp) | How to use `os.walk` for the indexing part. |
+| [Datacamp - `tqdm`](https://www.datacamp.com/tutorial/tqdm-python?dc_referrer=https%3A%2F%2Fwww.google.com%2F) | How to use the `tqdm` library to implement progress bar. |
 
 ### ✏️ Other
 | Resource | Description |

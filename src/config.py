@@ -6,14 +6,14 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/15 10:29:07 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:27:41 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 10:00:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
-class Config(str, Enum):
+class PathConfig(str, Enum):
     DEFAULT_DATASET_PATH = (
         'data/datasets/UnansweredQuestions/dataset_docs_public.json'
     )
@@ -32,3 +32,10 @@ class Config(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+
+class RAGConfig(IntEnum):
+    MIN_CHUNK_SIZE = 0
+    MAX_CHUNK_SIZE = 2000
+    MIN_N_CHUNKS = 0
+    MAX_N_CHUNKS = 1000

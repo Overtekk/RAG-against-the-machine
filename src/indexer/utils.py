@@ -6,14 +6,14 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/01 11:18:23 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/16 21:18:51 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 09:46:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import zipfile
 import os
 from src.utils import print_log, print_rule, check_file_extension
-from src.config import Config
+from src.config import PathConfig
 
 
 IGNORED_PATH = [
@@ -43,7 +43,7 @@ def extract_archive(zip_path: str) -> None:
 
     try:
         with zipfile.ZipFile(zip_path, 'r') as zf:
-            zf.extractall(path=Config.DEFAULT_VLLM_DIRECTORY)
+            zf.extractall(path=PathConfig.DEFAULT_VLLM_DIRECTORY)
             print_log("✅ Zip extracted.", color='green')
 
     except zipfile.BadZipFile:

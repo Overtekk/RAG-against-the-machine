@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/16 21:16:23 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/17 09:58:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -66,7 +66,11 @@ def _saving_chunks(
 
     # Create the structure of the json
     chunks_dataset: list[dict[str, str]] = []
-    for metadata, raw_text in zip(metadatas_list, texts_list):
+    for metadata, raw_text in tqdm(
+        zip(metadatas_list, texts_list),
+        desc='Saving Chunks',
+        total=len(metadatas_list)):
+
         chunks_dataset.append({
             "file_path": metadata["file_path"],
             "first_character_index": metadata["first_character_index"],
