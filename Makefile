@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 12:05:11 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/19 19:14:25 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -25,8 +25,7 @@ CHECK_UV		=	command -v uv
 
 # -- Files & Folders --
 SRC				=	src
-LINT_TESTER		=	$(SRC) \
-					test
+LINT_TESTER		=	$(SRC)
 
 RUN				=	$(UV_PYTHON) -m $(SRC)
 
@@ -41,8 +40,9 @@ k				?= 10
 # =		RULES		=
 # ===================
 
-.PHONY:		all install run run-debug debug build clean fclean lint lint-strict delete-uv \
-			index, answer, search, eval, answer_dataset
+.PHONY:		all install run run-debug clean fclean delete-uv  \
+			lint lint-strict lint-format \
+			index search search_dataset answer answer_dataset eval
 .SILENT:
 
 all:				install run
@@ -116,6 +116,9 @@ lint-strict:
 					$(UV_FLAKE8) $(LINT_TESTER) || status=$$?; \
 					$(UV_MYPY) $(LINT_TESTER) $(MYPY_FLAGS) --strict || status=$$?; \
 					exit $$status
+
+lint-format:
+					uv run ruff format
 
 delete-uv:
 					@if $(CHECK_UV) > /dev/null 2>&1; then \

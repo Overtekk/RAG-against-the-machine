@@ -136,6 +136,7 @@ This project must have a Makefile and the following rules:
 | Resource | Description |
 | :------: | :---------: |
 | [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | 42 student repo helping me with the global architecture when stuck. |
+| [Documentation for `ruff`](https://docs.astral.sh/ruff/) | Official documentation for the `ruff` library which is a code formatter. Faster than flake8 and can format the code itself |
 
 
 ### IA was use to:
