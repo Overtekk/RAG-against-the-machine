@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 13:21:32 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 17:34:27 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -17,7 +17,15 @@ from pathlib import Path
 from json import JSONDecodeError
 from pydantic import ValidationError
 from src import RAGError
-from src.model import ChunkSearchResult, UnansweredQuestion, AnsweredQuestion, RagDataset, MinimalSearchResults, StudentSearchResults
+from src.model import (
+    MinimalSource,
+    ChunkSearchResult,
+    UnansweredQuestion,
+    AnsweredQuestion,
+    RagDataset,
+    MinimalSearchResults,
+    StudentSearchResults,
+)
 from src.utils import print_log, print_rule, is_folder_exist, is_file_exist
 
 
@@ -27,7 +35,7 @@ class RetrieverEngine:
         self._directories_list = directories_list
         self._load_database()
 
-    def retrieve(self, query: str) -> list[ChunkSearchResult]:
+    def retrieve(self, query: str) -> list[MinimalSource]:
         # Tokenize the query
         query_token = bm25s.tokenize(query, show_progress=True, leave=False)
 
@@ -44,7 +52,7 @@ class RetrieverEngine:
         top_k_scores = scores[0]
 
         # Add the content and score to the result of the retriever
-        retrieve_chunks: list[ChunkSearchResult] = []
+        retrieve_chunks: list[MinimalSource] = []
         for index, score in zip(top_k_indices, top_k_scores):
             try:
                 # Find the correspond chunk in the database, copy its data
@@ -60,57 +68,72 @@ class RetrieverEngine:
                     "Re-run the index command."
                 )
             except ValidationError:
-                raise RAGError("Error while trying to create the retriever model.")
+                raise RAGError(
+                    "Error while trying to create the retriever model."
+                )
 
         return retrieve_chunks
 
-    def retrieve_dataset(self, dataset: list[AnsweredQuestion | UnansweredQuestion]) -> list[MinimalSearchResults]:
+    def retrieve_dataset(
+        self, dataset: list[AnsweredQuestion | UnansweredQuestion]
+    ) -> list[MinimalSearchResults]:
         minimal_search_results: list[MinimalSearchResults] = []
         # Create the Pydantic object and add it to the list
         for data in dataset:
             search_result = MinimalSearchResults(
                 question_id=data.question_id,
                 question=data.question,
-                retrieved_sources=self.retrieve(data.question)
+                retrieved_sources=self.retrieve(data.question),
             )
             minimal_search_results.append(search_result)
 
         return minimal_search_results
 
-    def save_retriever_result(self, minimal_search_results: list[MinimalSearchResults], save_dir: str) -> None:
+    def save_retriever_result(
+        self,
+        minimal_search_results: list[MinimalSearchResults],
+        save_dir: str,
+        file_name: str,
+    ) -> None:
         # Create the Pydantic object
         results = StudentSearchResults(
-            search_results=minimal_search_results,
-            k=self._k
+            search_results=minimal_search_results, k=self._k
         )
 
-        # Create the file, open and write the previous created object
-        save_file_path = os.path.join(save_dir, "dataset_docs_public.json")
+        # Create the save file path
+        save_file_path = os.path.join(save_dir, file_name)
+        # Write the result to it
         with open(save_file_path, "w", encoding="utf-8") as f:
             f.write(results.model_dump_json(indent=4))
 
         print_log(f"Saved student_search_results to '{save_file_path}'")
 
-    def create_dataset(self, dataset_path: str) -> list[AnsweredQuestion | UnansweredQuestion]:
+    def create_dataset(
+        self, file_path: Path
+    ) -> list[AnsweredQuestion | UnansweredQuestion] | None:
         rag_dataset: list[AnsweredQuestion | UnansweredQuestion] = []
 
-        # Find all json file in the given path
-        for file_path in Path(dataset_path).rglob('*.json'):
-            if file_path.is_file():
-                # Check the model between Answered and Unanswered
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    try:
-                        # Valid if the model of the file
-                        data = json.load(f)
-                        data_dataset = RagDataset.model_validate(data)
-                        # Add the dataset to the global list of questions
-                        rag_dataset.extend(data_dataset.rag_questions)
-                    except JSONDecodeError:
-                        print_log(f"⚠️  Error while trying to open '{file_path}'. Skipping\n", "gold1")
-                        continue
-                    except ValidationError:
-                        print_log(f"⚠️  '{file_path}' do not seem to be an valid model. Skipping\n", "gold1")
-                        continue
+        # Check the model between Answered and Unanswered
+        with open(file_path, "r", encoding="utf-8") as f:
+            try:
+                # Valid if the model of the file
+                data = json.load(f)
+                data_dataset = RagDataset.model_validate(data)
+                # Add the dataset to the global list of questions
+                rag_dataset.extend(data_dataset.rag_questions)
+
+            except JSONDecodeError:
+                print_log(
+                    f"⚠️  Error while trying to open '{file_path}'. "
+                    "Skipping\n", "gold1"
+                )
+                return None
+            except ValidationError:
+                print_log(
+                    f"⚠️  '{file_path}' does not seem to be an valid model. "
+                    "Skipping\n", "gold1"
+                )
+                return None
 
         return rag_dataset
 

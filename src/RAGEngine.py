@@ -6,11 +6,11 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 13:05:18 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 17:29:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-import pathlib
+from pathlib import Path
 from typing import Any
 from src.utils import (
     is_folder_exist,
@@ -125,6 +125,7 @@ class RAGEngine:
             )
         print(result_msg)
 
+    @func_timer
     def search_dataset(
         self,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
@@ -141,22 +142,32 @@ class RAGEngine:
             )
         except RAGError as e:
             raise ValueError(e)
-        # Check paths
-        _check_path(dataset_path, True)
+        # Check path
         _check_path(save_directory, True)
 
         try:
+            # Init the retriever
             retriever = RetrieverEngine(k, LIST_DIRECTORY)
-            rag_dataset = retriever.create_dataset(dataset_path)
-            search_results = retriever.retrieve_dataset(rag_dataset)
-            retriever.save_retriever_result(search_results, save_directory)
 
+            # Go throught the dataset path given
+            path = Path(dataset_path)
+            for file in (
+                [path] if path.is_file() else list(path.rglob("*.json"))
+            ):
+                rag_dataset = retriever.create_dataset(file)
+                if rag_dataset:
+                    search_results = retriever.retrieve_dataset(rag_dataset)
+                    retriever.save_retriever_result(
+                        search_results, save_directory, file.name
+                    )
         except RAGError as e:
             raise ValueError(e)
 
+    @func_timer
     def answer(self, query: str, k: int = 10) -> None:
         pass
 
+    @func_timer
     def answer_dataset(
         self,
         student_search_results_path: str = (
@@ -168,6 +179,7 @@ class RAGEngine:
         _check_path(student_search_results_path)
         _check_path(save_directory, True)
 
+    @func_timer
     def evaluate_student_search_results(
         self,
         student_answer_path: str = PathConfig.DEFAULT_STUDENT_ANSWER_PATH,
@@ -199,7 +211,7 @@ def _check_path(raw_path: str, is_directory: bool = False) -> None:
     Raises:
         ValueError: If an error occurred with permissions.
     """
-    path: pathlib.Path = pathlib.Path(raw_path)
+    path = Path(raw_path)
 
     # Create the folders if they do not exist
     if path.parent:

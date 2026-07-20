@@ -41,4 +41,5 @@ class RAGConfig(IntEnum):
 
 class RAGError(Exception):
     """Custom class for RAGEngine related error."""
+
     pass

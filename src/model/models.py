@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:11:55 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 12:59:27 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 17:30:46 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -32,7 +32,8 @@ class MinimalSource(BaseModel):
 
 class ChunkSearchResult(MinimalSource):
     """
-    Model representing a result of a chunk search that inherit from MinimalSource.
+    Model representing a result of a chunk search that inherit from
+    MinimalSource.
 
     Attributes:
         score (float): Score of the result.
