@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:11:55 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 12:21:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 12:59:27 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -30,6 +30,19 @@ class MinimalSource(BaseModel):
     last_character_index: int
 
 
+class ChunkSearchResult(MinimalSource):
+    """
+    Model representing a result of a chunk search that inherit from MinimalSource.
+
+    Attributes:
+        score (float): Score of the result.
+        content (str): Content of the chunk.
+    """
+
+    score: float
+    content: str
+
+
 class UnansweredQuestion(BaseModel):
     """
     Model representing an unanswered question.
@@ -43,7 +56,7 @@ class UnansweredQuestion(BaseModel):
     question: str
 
 
-class AnsweredQuestion(BaseModel):
+class AnsweredQuestion(UnansweredQuestion):
     """
     Model representing an answered question.
 
@@ -82,7 +95,7 @@ class MinimalSearchResults(BaseModel):
     retrieved_sources: list[MinimalSource]
 
 
-class MinimalAnswer(BaseModel):
+class MinimalAnswer(MinimalSearchResults):
     """
     Model representing the search answer.
 

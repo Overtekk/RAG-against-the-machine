@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/19 19:14:25 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 11:31:17 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -34,6 +34,9 @@ max_chunk_size 	?=	2000
 # -- Search command --
 query			?=
 k				?= 10
+# -- Search dataset command --
+dataset_path	?= "data/datasets/"
+save_directory	?= "data/output/search_results/"
 
 
 # ===================
@@ -69,7 +72,7 @@ search:				install
 
 search_dataset:		install
 					@clear
-					$(RUN) search_dataset
+					$(RUN) search_dataset --dataset_path="$(dataset_path)" --k=$(k) --save_directory="$(save_directory)"
 
 answer:				install
 					@clear

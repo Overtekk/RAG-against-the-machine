@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 10:16:59 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 13:05:18 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -103,7 +103,7 @@ class RAGEngine:
             )
         except RAGError as e:
             raise ValueError(e)
-        if not query and not isinstance(query, str):
+        if not query or not isinstance(query, str):
             raise ValueError("Please, provide a valid question.")
 
         # Init the retriever and retrieve the k best results
@@ -120,8 +120,8 @@ class RAGEngine:
         result_msg = ""
         for index in result:
             result_msg += (
-                f"{index['file_path']} [{index['first_character_index']}:"
-                f"{index['last_character_index']}]\n"
+                f"{index.file_path} [{index.first_character_index}:"
+                f"{index.last_character_index}]\n"
             )
         print(result_msg)
 
@@ -142,11 +142,14 @@ class RAGEngine:
         except RAGError as e:
             raise ValueError(e)
         # Check paths
-        _check_path(dataset_path)
+        _check_path(dataset_path, True)
         _check_path(save_directory, True)
 
         try:
-            retriever = RetrieverEngine(k, LIST_DIRECTORY)  # noqa
+            retriever = RetrieverEngine(k, LIST_DIRECTORY)
+            rag_dataset = retriever.create_dataset(dataset_path)
+            search_results = retriever.retrieve_dataset(rag_dataset)
+            retriever.save_retriever_result(search_results, save_directory)
 
         except RAGError as e:
             raise ValueError(e)

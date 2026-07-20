@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/15 10:29:07 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 14:20:01 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 11:18:57 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,16 +14,14 @@ from enum import Enum, IntEnum
 
 
 class PathConfig(str, Enum):
-    DEFAULT_DATASET_PATH = (
-        "data/datasets/UnansweredQuestions/dataset_docs_public.json"
+    DEFAULT_DATASET_PATH = "data/datasets/"
+    DEFAULT_SAVE_DIRECTORY = "data/output/search_results/"
+    DEFAULT_STUDENT_SEARCH_RESULTS_PATH = (
+        "data/output/search_results/dataset_docs_public.json"
     )
     DEFAULT_STUDENT_ANSWER_PATH = (
         "data/output/search_results/dataset_docs_public.json"
     )
-    DEFAULT_STUDENT_SEARCH_RESULTS_PATH = (
-        "data/output/search_results/dataset_docs_public.json"
-    )
-    DEFAULT_SAVE_DIRECTORY = "data/output/search_results"
     DEFAULT_VLLM_DIRECTORY = "data/raw/"
     VLLM_ZIP = "vllm-0.10.1.zip"
     INDEX_DIRECTORY = "data/processed/"
@@ -43,5 +41,4 @@ class RAGConfig(IntEnum):
 
 class RAGError(Exception):
     """Custom class for RAGEngine related error."""
-
     pass

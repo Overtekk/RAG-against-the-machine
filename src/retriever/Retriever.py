@@ -6,26 +6,28 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 14:31:54 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 13:21:32 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-from typing import Any
 import os
 import bm25s
 import json
+from pathlib import Path
 from json import JSONDecodeError
+from pydantic import ValidationError
 from src import RAGError
+from src.model import ChunkSearchResult, UnansweredQuestion, AnsweredQuestion, RagDataset, MinimalSearchResults, StudentSearchResults
 from src.utils import print_log, print_rule, is_folder_exist, is_file_exist
 
 
 class RetrieverEngine:
-    def __init__(self, k: int, directories_list: dict[str, str]):
+    def __init__(self, k: int, directories_list: dict[str, str]) -> None:
         self._k = k
-        self.directories_list = directories_list
+        self._directories_list = directories_list
         self._load_database()
 
-    def retrieve(self, query: str) -> list[dict[str, Any]]:
+    def retrieve(self, query: str) -> list[ChunkSearchResult]:
         # Tokenize the query
         query_token = bm25s.tokenize(query, show_progress=True, leave=False)
 
@@ -42,22 +44,75 @@ class RetrieverEngine:
         top_k_scores = scores[0]
 
         # Add the content and score to the result of the retriever
-        retrieve_chunk: list[dict[str, str]] = []
+        retrieve_chunks: list[ChunkSearchResult] = []
         for index, score in zip(top_k_indices, top_k_scores):
-            # Find the correspond chunk in the database, copy its data
             try:
-                chunk = self._chunks[index].copy()
+                # Find the correspond chunk in the database, copy its data
+                data_dict = self._chunks[index]
+                # Add the score
+                data_dict["score"] = float(score)
+                # Create the model and add it to the global list
+                chunk_result = ChunkSearchResult.model_validate(data_dict)
+                retrieve_chunks.append(chunk_result)
             except IndexError:
                 raise RAGError(
                     "Error while trying to find the index in the retriever. "
                     "Re-run the index command."
                 )
-            # Add the score
-            chunk["score"] = float(score)
-            # Add everything into the new dict
-            retrieve_chunk.append(chunk)
+            except ValidationError:
+                raise RAGError("Error while trying to create the retriever model.")
 
-        return retrieve_chunk
+        return retrieve_chunks
+
+    def retrieve_dataset(self, dataset: list[AnsweredQuestion | UnansweredQuestion]) -> list[MinimalSearchResults]:
+        minimal_search_results: list[MinimalSearchResults] = []
+        # Create the Pydantic object and add it to the list
+        for data in dataset:
+            search_result = MinimalSearchResults(
+                question_id=data.question_id,
+                question=data.question,
+                retrieved_sources=self.retrieve(data.question)
+            )
+            minimal_search_results.append(search_result)
+
+        return minimal_search_results
+
+    def save_retriever_result(self, minimal_search_results: list[MinimalSearchResults], save_dir: str) -> None:
+        # Create the Pydantic object
+        results = StudentSearchResults(
+            search_results=minimal_search_results,
+            k=self._k
+        )
+
+        # Create the file, open and write the previous created object
+        save_file_path = os.path.join(save_dir, "dataset_docs_public.json")
+        with open(save_file_path, "w", encoding="utf-8") as f:
+            f.write(results.model_dump_json(indent=4))
+
+        print_log(f"Saved student_search_results to '{save_file_path}'")
+
+    def create_dataset(self, dataset_path: str) -> list[AnsweredQuestion | UnansweredQuestion]:
+        rag_dataset: list[AnsweredQuestion | UnansweredQuestion] = []
+
+        # Find all json file in the given path
+        for file_path in Path(dataset_path).rglob('*.json'):
+            if file_path.is_file():
+                # Check the model between Answered and Unanswered
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    try:
+                        # Valid if the model of the file
+                        data = json.load(f)
+                        data_dataset = RagDataset.model_validate(data)
+                        # Add the dataset to the global list of questions
+                        rag_dataset.extend(data_dataset.rag_questions)
+                    except JSONDecodeError:
+                        print_log(f"⚠️  Error while trying to open '{file_path}'. Skipping\n", "gold1")
+                        continue
+                    except ValidationError:
+                        print_log(f"⚠️  '{file_path}' do not seem to be an valid model. Skipping\n", "gold1")
+                        continue
+
+        return rag_dataset
 
     # :-----------------:
     #   PRIVATE METHODS
@@ -66,7 +121,7 @@ class RetrieverEngine:
     def _load_database(self) -> None:
         # - SECURITY -
         chunk_db_file = os.path.join(
-            self.directories_list["chunk_dir"], "chunks_db.json"
+            self._directories_list["chunk_dir"], "chunks_db.json"
         )
         self._security_checker(chunk_db_file)
 
@@ -75,7 +130,7 @@ class RetrieverEngine:
         print_log("Loading the BM25 database...")
         try:
             self._retriever = bm25s.BM25.load(
-                self.directories_list["bm25_dir"], load_corpus=False
+                self._directories_list["bm25_dir"], load_corpus=False
             )
         except FileNotFoundError as e:
             raise RAGError(f"{e}\nRe-run the index command.")
@@ -96,13 +151,13 @@ class RetrieverEngine:
     def _security_checker(self, chunk_db_file: str) -> None:
         # - BM25 Directory -
         # Check that the BM25 directory exist.
-        if not is_folder_exist(self.directories_list["bm25_dir"]):
+        if not is_folder_exist(self._directories_list["bm25_dir"]):
             raise RAGError(
                 "BM25 indexing directory doesn't exist. Cannot launch the "
                 "retriever.\nRun the index command first."
             )
         # Check that is not empty
-        if len(os.listdir(self.directories_list["bm25_dir"])) == 0:
+        if len(os.listdir(self._directories_list["bm25_dir"])) == 0:
             raise RAGError("Cannot retrieve. The BM25 folder is empty.")
 
         # - Chunks Directory -
