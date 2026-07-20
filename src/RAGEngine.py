@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 17:29:23 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 17:36:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -188,7 +188,6 @@ class RAGEngine:
         max_context_lenght: int = 2000,
     ) -> None:
         # Check paths
-        _check_path(student_answer_path)
         _check_path(dataset_path)
 
 
