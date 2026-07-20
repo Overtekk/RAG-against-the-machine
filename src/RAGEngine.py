@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 14:54:00 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 10:16:59 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -81,7 +81,7 @@ class RAGEngine:
         nb_chunks = indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
         print_with_color(
-            f"\nIngestion complete! Indexed {len(nb_chunks)} chunks in "
+            f"\nIngestion complete! Indexed {nb_chunks} chunks in "
             f"'{PathConfig.INDEX_CHUNKS_DIRECTORY}'.\nIndices saved under "
             f"'{PathConfig.INDEX_BM25_DIRECTORY}'",
             "green",
@@ -146,7 +146,7 @@ class RAGEngine:
         _check_path(save_directory, True)
 
         try:
-            retriever = RetrieverEngine(k, LIST_DIRECTORY)
+            retriever = RetrieverEngine(k, LIST_DIRECTORY)  # noqa
 
         except RAGError as e:
             raise ValueError(e)

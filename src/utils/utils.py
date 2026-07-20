@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 13:40:01 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/15 11:54:07 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 10:17:24 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -128,7 +128,7 @@ STANDARD_CONSOLE: Console = Console()
 ERROR_CONSOLE: Console = Console(stderr=True)
 
 
-def print_error(message: str) -> None:
+def print_error(message: str | ValueError) -> None:
     """
     Displays a formatted error message on the standard error stream.
 
@@ -175,7 +175,7 @@ def print_log(message: str, color: str = "white") -> None:
     STANDARD_CONSOLE.log(message, _stack_offset=2, style=style_rule)
 
 
-def print_rule(message: str = None, color: str = "bold blue") -> None:
+def print_rule(message: str = "", color: str = "bold blue") -> None:
     """
     Display a horizontal rule with a message at the center and with a
     specific color. If the color doesn't exist or isn't specify, the color

@@ -1,12 +1,12 @@
 # ************************************************************************* #
 #                                                                           #
 #                                                      :::      ::::::::    #
-#  chunker.py                                        :+:      :+:    :+:    #
+#  ChunkerEngine.py                                  :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/16 21:19:32 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 10:12:28 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,17 +21,17 @@ class ChunkerEngine:
 
     def process(
         self, file_path: str, content: str
-    ) -> list[tuple[MinimalSource, str]]:
-        if check_file_extension(file_path, ".md") or check_file_extension(
-            file_path, ".txt"
-        ):
-            return self._chunk_txt_file(file_path, content)
+    ) -> list[tuple[MinimalSource, str]] | None:
+        for extension in [".txt", ".md"]:
+            if check_file_extension(file_path, extension):
+                return self._chunk_txt_file(file_path, content)
 
-        elif check_file_extension(file_path, ".py"):
+        if check_file_extension(file_path, ".py"):
             return self._chunk_py_file(file_path, content)
 
         else:
             print_log(f"Unkown file extension for {file_path}.", "red")
+        return None
 
     # :-----------------:
     #   PRIVATE METHODS

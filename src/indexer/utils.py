@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/01 11:18:23 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 09:46:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 10:09:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -67,7 +67,7 @@ def load_files(vLLM_path: str) -> list[tuple[str, str]]:
 
     # Scan all files from the root, recursive for each folders.
     for root, dirs, filesname in os.walk(
-        vLLM_path, topdown=True, onerror=True, followlinks=False
+        vLLM_path, topdown=True, onerror=None, followlinks=False
     ):
         # IGNORED FILES OR FOLDERS
         dirs[:] = [d for d in dirs if d not in IGNORED_PATH]

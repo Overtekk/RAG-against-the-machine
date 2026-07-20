@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 09:27:09 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/17 13:32:24 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/20 10:16:33 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,11 +14,11 @@ import json
 import os
 import bm25s
 import Stemmer
+from typing import Any
 from tqdm import tqdm
 from .utils import load_files
 from .ChunkerEngine import ChunkerEngine
 from src.utils import print_log, print_rule
-from src.model import MinimalSource
 
 
 def indexer(
@@ -35,7 +35,7 @@ def indexer(
     # Init the chunker class with the chunk size
     the_chunker = ChunkerEngine(chunk_size)
 
-    metadatas_list: list[MinimalSource] = []
+    metadatas_list: list[dict[str, Any]] = []
     texts_list: list[str] = []
 
     # Go throught all files and, if the file is not empty, add the
@@ -61,7 +61,7 @@ def indexer(
 
 
 def _saving_chunks(
-    metadatas_list: list[MinimalSource],
+    metadatas_list: list[dict[str, Any]],
     texts_list: list[str],
     data_directory: dict[str, str],
 ) -> int:
@@ -93,11 +93,11 @@ def _saving_chunks(
         json.dump(chunks_dataset, f, ensure_ascii=False, indent=4)
 
     print_log(f"Chunks database saved under '{chunks_file_path}'")
-    return chunks_dataset
+    return len(chunks_dataset)
 
 
 def _build_index(
-    metadatas_list: list[MinimalSource],
+    metadatas_list: list[dict[str, Any]],
     texts_list: list[str],
     data_directory: dict[str, str],
 ) -> None:
