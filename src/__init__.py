@@ -13,6 +13,4 @@
 from src.config import PathConfig, RAGConfig, RAGError
 
 
-__all__ = [
-    'PathConfig', 'RAGConfig', 'RAGError'
-]
+__all__ = ["PathConfig", "RAGConfig", "RAGError"]

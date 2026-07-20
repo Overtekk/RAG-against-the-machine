@@ -16,13 +16,9 @@ from src.utils import print_log, print_rule, check_file_extension
 from src.config import PathConfig
 
 
-IGNORED_PATH = [
-    '__pycache__', '.git'
-]
+IGNORED_PATH = ["__pycache__", ".git"]
 
-EXTENSIONS_TO_CHECK = [
-    '.py', '.md', '.txt'
-]
+EXTENSIONS_TO_CHECK = [".py", ".md", ".txt"]
 
 
 def extract_archive(zip_path: str) -> None:
@@ -42,9 +38,9 @@ def extract_archive(zip_path: str) -> None:
     print_log("📁 Extracting ...")
 
     try:
-        with zipfile.ZipFile(zip_path, 'r') as zf:
+        with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(path=PathConfig.DEFAULT_VLLM_DIRECTORY)
-            print_log("✅ Zip extracted.", color='green')
+            print_log("✅ Zip extracted.", color="green")
 
     except zipfile.BadZipFile:
         raise ValueError("Error when extracting ZIP file.")
@@ -70,14 +66,13 @@ def load_files(vLLM_path: str) -> list[tuple[str, str]]:
     files_list: list[tuple[str, str]] = []
 
     # Scan all files from the root, recursive for each folders.
-    for (root, dirs, filesname) in os.walk(
-        vLLM_path, topdown=True, onerror=True, followlinks=False):
-
+    for root, dirs, filesname in os.walk(
+        vLLM_path, topdown=True, onerror=True, followlinks=False
+    ):
         # IGNORED FILES OR FOLDERS
         dirs[:] = [d for d in dirs if d not in IGNORED_PATH]
 
         for file in filesname:
-
             # CHECK EXTENSION
             for extension in EXTENSIONS_TO_CHECK:
                 if not check_file_extension(file, extension):
@@ -88,15 +83,17 @@ def load_files(vLLM_path: str) -> list[tuple[str, str]]:
 
                 # Open the file
                 try:
-                    with open(filepath, encoding='utf-8') as f:
+                    with open(filepath, encoding="utf-8") as f:
                         # Add the filepath and file content
                         files_list.append((filepath, f.read()))
 
                 except PermissionError:
-                    print_log(f"Permission error for file: {file}.", 'red')
+                    print_log(f"Permission error for file: {file}.", "red")
                 except Exception as e:
                     print_log(
                         f"Error while trying to open file: {file} with error "
-                        f"{e}", 'red')
+                        f"{e}",
+                        "red",
+                    )
 
     return files_list

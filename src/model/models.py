@@ -24,6 +24,7 @@ class MinimalSource(BaseModel):
         first_character_index (int): Index of the first character in the source
         last_character_index (int): Index of the last character in the source.
     """
+
     file_path: str
     first_character_index: int
     last_character_index: int
@@ -37,9 +38,8 @@ class UnansweredQuestion(BaseModel):
         question_id (str): uuid of the question.
         question: raw question.
     """
-    question_id: str = Field(
-        default_factory=lambda: str(uuid.uuid4())
-    )
+
+    question_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     question: str
 
 
@@ -51,6 +51,7 @@ class AnsweredQuestion(BaseModel):
         sources (list): list of source information.
         answer: raw question.
     """
+
     sources: list[MinimalSource]
     answer: str
 
@@ -62,6 +63,7 @@ class RagDataset(BaseModel):
     Attributes:
         sources (list): list of answered or unanswered questions.
     """
+
     rag_questions: list[AnsweredQuestion | UnansweredQuestion]
 
 
@@ -74,6 +76,7 @@ class MinimalSearchResults(BaseModel):
         question (str): raw question.
         retrieved_sources (list): list of source information.
     """
+
     question_id: str
     question: str
     retrieved_sources: list[MinimalSource]
@@ -86,6 +89,7 @@ class MinimalAnswer(BaseModel):
     Attributes:
         answer (str): search answer string.
     """
+
     answer: str
 
 
@@ -97,6 +101,7 @@ class StudentSearchResults(BaseModel):
         search_results (list): list of search results.
         k (int): number of results requested.
     """
+
     search_results: list[MinimalSearchResults]
     k: int
 
@@ -108,5 +113,6 @@ class StudentSearchResultsAndAnswer(BaseModel):
     Attributes:
         search_results (list): list of answers results.
     """
+
     search_results: list[MinimalAnswer]
     k: int

@@ -25,20 +25,18 @@ def main() -> int:
         int: 0 if success. 1 if error.
     """
     try:
-
-        print_with_color(
-            '\n📤 RAG joined the terminal\n', 'bright_yellow')
+        print_with_color("\n📤 RAG joined the terminal\n", "bright_yellow")
 
         # Init the CLI with Python Fire by calling the RAGEngine class as
         # argument.
         fire.Fire(RAGEngine)
 
-        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
+        print_with_color("\n📥 RAG left the terminal.", "bright_yellow")
         return 0
 
     except ValueError as e:
         print_error(e)
-        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
+        print_with_color("\n📥 RAG left the terminal.", "bright_yellow")
         return 1
 
     # except Exception as e:
@@ -47,11 +45,11 @@ def main() -> int:
     #     return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         sys.exit(main())
 
     except KeyboardInterrupt:
-        print_error('Program interrupted by the user. 😥\nGoodbye!')
-        print_with_color('\n📥 RAG left the terminal.', 'bright_yellow')
+        print_error("Program interrupted by the user. 😥\nGoodbye!")
+        print_with_color("\n📥 RAG left the terminal.", "bright_yellow")
         sys.exit(130)

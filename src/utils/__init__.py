@@ -11,17 +11,34 @@
 # ************************************************************************* #
 
 from src.utils.utils import (
-    is_folder_exist, is_file_exist, check_file_extension, check_perm_can_write,
-    check_perm_can_read, check_perm_can_execute,
-    print_error, print_log, print_rule, print_success, print_warn,
-    print_with_color
+    is_folder_exist,
+    is_file_exist,
+    check_file_extension,
+    check_perm_can_write,
+    check_perm_can_read,
+    check_perm_can_execute,
+    print_error,
+    print_log,
+    print_rule,
+    print_success,
+    print_warn,
+    print_with_color,
 )
 from src.utils.timer import func_timer
 
 
 __all__ = [
-    'is_folder_exist', 'is_file_exist', 'check_file_extension',
-    'check_perm_can_write', 'check_perm_can_read', 'check_perm_can_execute',
-    'print_error', 'print_log', 'print_rule', 'print_success', 'print_warn',
-    'print_with_color', 'func_timer'
+    "is_folder_exist",
+    "is_file_exist",
+    "check_file_extension",
+    "check_perm_can_write",
+    "check_perm_can_read",
+    "check_perm_can_execute",
+    "print_error",
+    "print_log",
+    "print_rule",
+    "print_success",
+    "print_warn",
+    "print_with_color",
+    "func_timer",
 ]

@@ -15,43 +15,45 @@ from src.model import MinimalSource
 from src.utils import check_file_extension, print_log
 
 
-class ChunkerEngine():
+class ChunkerEngine:
     def __init__(self, chunk_size: int) -> None:
         self._chunk_size: int = chunk_size
 
     def process(
-        self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
-        if (check_file_extension(file_path, '.md') or
-                check_file_extension(file_path, '.txt')):
+        self, file_path: str, content: str
+    ) -> list[tuple[MinimalSource, str]]:
+        if check_file_extension(file_path, ".md") or check_file_extension(
+            file_path, ".txt"
+        ):
             return self._chunk_txt_file(file_path, content)
 
-        elif check_file_extension(file_path, '.py'):
+        elif check_file_extension(file_path, ".py"):
             return self._chunk_py_file(file_path, content)
 
         else:
-            print_log(f"Unkown file extension for {file_path}.", 'red')
+            print_log(f"Unkown file extension for {file_path}.", "red")
 
     # :-----------------:
     #   PRIVATE METHODS
     # :-----------------:
 
     def _chunk_py_file(
-        self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
+        self, file_path: str, content: str
+    ) -> list[tuple[MinimalSource, str]]:
         python_splitter = RecursiveCharacterTextSplitter.from_language(
             language=Language.PYTHON,
             chunk_size=self._chunk_size,
-            chunk_overlap=0
+            chunk_overlap=0,
         )
 
         return self._split_text(python_splitter, file_path, content)
 
     def _chunk_txt_file(
-        self, file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
+        self, file_path: str, content: str
+    ) -> list[tuple[MinimalSource, str]]:
         # Split the text based on the chunk size. Keep all seperators
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self._chunk_size,
-            chunk_overlap=0,
-            keep_separator=True
+            chunk_size=self._chunk_size, chunk_overlap=0, keep_separator=True
         )
 
         return self._split_text(text_splitter, file_path, content)
@@ -59,7 +61,9 @@ class ChunkerEngine():
     def _split_text(
         self,
         text_splitter: RecursiveCharacterTextSplitter,
-        file_path: str, content: str) -> list[tuple[MinimalSource, str]]:
+        file_path: str,
+        content: str,
+    ) -> list[tuple[MinimalSource, str]]:
         # Create the index and the list
         index: int = 0
         chunked_txt: list[tuple[MinimalSource, str]] = []
@@ -74,11 +78,15 @@ class ChunkerEngine():
             index = sub_last_index
 
             # Add the chunk to the list as MinimalSource
-            chunked_txt.append((MinimalSource(
-                file_path=file_path,
-                first_character_index=sub_first_index,
-                last_character_index=sub_last_index), sub_txt)
+            chunked_txt.append(
+                (
+                    MinimalSource(
+                        file_path=file_path,
+                        first_character_index=sub_first_index,
+                        last_character_index=sub_last_index,
+                    ),
+                    sub_txt,
+                )
             )
 
         return chunked_txt
-

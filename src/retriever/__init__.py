@@ -13,6 +13,4 @@
 from src.retriever.Retriever import RetrieverEngine
 
 
-__all__ = [
-    'RetrieverEngine'
-]
+__all__ = ["RetrieverEngine"]

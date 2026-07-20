@@ -39,6 +39,7 @@ def func_timer(f: Callable[..., Any]) -> Callable[..., Any]:
         Callable: The wrapped function, which executes the original
         function and returns its unmodified result.
     """
+
     @wraps(f)
     def wrap(*args: Any, **kwargs: Any) -> Any:
         time_start: float = perf_counter()
@@ -53,4 +54,5 @@ def func_timer(f: Callable[..., Any]) -> Callable[..., Any]:
         )
 
         return func_result
+
     return wrap

@@ -67,7 +67,7 @@ def check_file_extension(file: pathlib.Path | str, extension: str) -> bool:
     if not isinstance(file, pathlib.Path):
         file = pathlib.Path(file)
 
-    if not extension.startswith('.'):
+    if not extension.startswith("."):
         extension = f".{extension}"
     return file.suffix == extension
 
@@ -207,6 +207,7 @@ def print_with_color(message: str, color: str = "white") -> None:
 # :-------------------:
 #   PRIVATE FUNCTIONS
 # :-------------------:
+
 
 def _check_color_validation(color: str) -> str:
     style_rule: str = color

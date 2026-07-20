@@ -13,8 +13,13 @@
 import pathlib
 from typing import Any
 from src.utils import (
-    is_folder_exist, is_file_exist, check_perm_can_read, check_perm_can_write,
-    print_log, print_with_color, func_timer
+    is_folder_exist,
+    is_file_exist,
+    check_perm_can_read,
+    check_perm_can_write,
+    print_log,
+    print_with_color,
+    func_timer,
 )
 from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
@@ -22,23 +27,24 @@ from src.retriever import RetrieverEngine
 
 
 LIST_DIRECTORY: dict[str, str] = {
-    'vllm_dir': PathConfig.DEFAULT_VLLM_DIRECTORY,
-    'index_dir': PathConfig.INDEX_DIRECTORY,
-    'bm25_dir': PathConfig.INDEX_BM25_DIRECTORY,
-    'chunk_dir': PathConfig.INDEX_CHUNKS_DIRECTORY
+    "vllm_dir": PathConfig.DEFAULT_VLLM_DIRECTORY,
+    "index_dir": PathConfig.INDEX_DIRECTORY,
+    "bm25_dir": PathConfig.INDEX_BM25_DIRECTORY,
+    "chunk_dir": PathConfig.INDEX_CHUNKS_DIRECTORY,
 }
 
 
-class RAGEngine():
-
+class RAGEngine:
     @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
         # - SECURITY -
         try:
             _check_value_range(
                 max_chunk_size,
-                RAGConfig.MIN_CHUNK_SIZE, RAGConfig.MAX_CHUNK_SIZE,
-                'max chunk size')
+                RAGConfig.MIN_CHUNK_SIZE,
+                RAGConfig.MAX_CHUNK_SIZE,
+                "max chunk size",
+            )
         except RAGError as e:
             raise ValueError(e)
 
@@ -50,7 +56,8 @@ class RAGEngine():
             if not is_folder_exist(vLLM_directory):
                 raise ValueError(
                     "vLLM zip or folder not found. Download it first and then"
-                    "re-run the program.")
+                    "re-run the program."
+                )
 
         # If folder not found, extract the archive. Otherwise, use the existing
         # folder.
@@ -59,7 +66,8 @@ class RAGEngine():
         else:
             if not check_perm_can_read(vLLM_directory):
                 raise ValueError(
-                    f"Error while trying to open {vLLM_directory}")
+                    f"Error while trying to open {vLLM_directory}"
+                )
 
         # Check that folders doesn't exist. If not, create them.
         for dir in LIST_DIRECTORY.values():
@@ -68,22 +76,30 @@ class RAGEngine():
         # Launch the indexer
         print_log(
             f"Starting the indexing with chunk size of {max_chunk_size}\n",
-            'yellow')
+            "yellow",
+        )
         nb_chunks = indexer(vLLM_directory, max_chunk_size, LIST_DIRECTORY)
 
         print_with_color(
             f"\nIngestion complete! Indexed {len(nb_chunks)} chunks in "
             f"'{PathConfig.INDEX_CHUNKS_DIRECTORY}'.\nIndices saved under "
-            f"'{PathConfig.INDEX_BM25_DIRECTORY}'", 'green'
+            f"'{PathConfig.INDEX_BM25_DIRECTORY}'",
+            "green",
         )
 
     @func_timer
-    def search(self, query: str, k: int = 10,) -> None:
+    def search(
+        self,
+        query: str,
+        k: int = 10,
+    ) -> None:
         # - SECURITY -
         try:
             _check_value_range(
-                k, RAGConfig.MIN_K_CHUNKS, RAGConfig.MAX_K_CHUNKS,
-                'number of results'
+                k,
+                RAGConfig.MIN_K_CHUNKS,
+                RAGConfig.MAX_K_CHUNKS,
+                "number of results",
             )
         except RAGError as e:
             raise ValueError(e)
@@ -98,7 +114,7 @@ class RAGEngine():
         except RAGError as e:
             raise ValueError(e)
 
-        print_log("✅ Done\n", 'green')
+        print_log("✅ Done\n", "green")
 
         # Go throught the result and print the final results
         result_msg = ""
@@ -109,17 +125,19 @@ class RAGEngine():
             )
         print(result_msg)
 
-    def search_dataset (
+    def search_dataset(
         self,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
         k: int = 10,
-        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY
+        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
     ) -> None:
         # - SECURITY -
         try:
             _check_value_range(
-                k, RAGConfig.MIN_K_CHUNKS, RAGConfig.MAX_K_CHUNKS,
-                'number of results'
+                k,
+                RAGConfig.MIN_K_CHUNKS,
+                RAGConfig.MAX_K_CHUNKS,
+                "number of results",
             )
         except RAGError as e:
             raise ValueError(e)
@@ -139,8 +157,9 @@ class RAGEngine():
     def answer_dataset(
         self,
         student_search_results_path: str = (
-            PathConfig.DEFAULT_STUDENT_SEARCH_RESULTS_PATH),
-        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY
+            PathConfig.DEFAULT_STUDENT_SEARCH_RESULTS_PATH
+        ),
+        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
     ) -> None:
         # Check paths
         _check_path(student_search_results_path)
@@ -151,7 +170,7 @@ class RAGEngine():
         student_answer_path: str = PathConfig.DEFAULT_STUDENT_ANSWER_PATH,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
         k: int = 10,
-        max_context_lenght: int = 2000
+        max_context_lenght: int = 2000,
     ) -> None:
         # Check paths
         _check_path(student_answer_path)
@@ -187,8 +206,9 @@ def _check_path(raw_path: str, is_directory: bool = False) -> None:
         if not is_folder_exist(path):
             path.mkdir()
         else:
-            if (not check_perm_can_read(path) and
-                    not check_perm_can_write(path)):
+            if not check_perm_can_read(path) and not check_perm_can_write(
+                path
+            ):
                 raise ValueError(f"Permission error for {path}")
 
     else:
@@ -196,11 +216,15 @@ def _check_path(raw_path: str, is_directory: bool = False) -> None:
             path.touch()
 
         else:
-            if (not check_perm_can_read(path) and
-                    not check_perm_can_write(path)):
+            if not check_perm_can_read(path) and not check_perm_can_write(
+                path
+            ):
                 raise ValueError(f"Permission error for {path}")
 
-def _check_value_range(variable: Any, min: int, max: int, type_name: str) -> None:
+
+def _check_value_range(
+    variable: Any, min: int, max: int, type_name: str
+) -> None:
     """Check the range value of the variable.
 
     Args:
@@ -220,6 +244,7 @@ def _check_value_range(variable: Any, min: int, max: int, type_name: str) -> Non
         raise RAGError(
             f"Provide a {type_name} superior to {min} and inferior to {max}"
         )
+
 
 def _check_if_int(variable: Any) -> bool:
     """Check if the provided value is of type int.

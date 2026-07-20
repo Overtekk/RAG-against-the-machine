@@ -13,17 +13,23 @@
 
 from src.model.models import (
     MinimalSource,
-    UnansweredQuestion, AnsweredQuestion,
+    UnansweredQuestion,
+    AnsweredQuestion,
     RagDataset,
-    MinimalSearchResults, MinimalAnswer,
-    StudentSearchResults, StudentSearchResultsAndAnswer
+    MinimalSearchResults,
+    MinimalAnswer,
+    StudentSearchResults,
+    StudentSearchResultsAndAnswer,
 )
 
 
 __all__ = [
-    'MinimalSource',
-    'UnansweredQuestion', 'AnsweredQuestion',
-    'RagDataset',
-    'MinimalSearchResults', 'MinimalAnswer',
-    'StudentSearchResults', 'StudentSearchResultsAndAnswer'
+    "MinimalSource",
+    "UnansweredQuestion",
+    "AnsweredQuestion",
+    "RagDataset",
+    "MinimalSearchResults",
+    "MinimalAnswer",
+    "StudentSearchResults",
+    "StudentSearchResultsAndAnswer",
 ]

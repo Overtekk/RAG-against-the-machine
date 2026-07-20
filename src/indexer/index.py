@@ -22,7 +22,8 @@ from src.model import MinimalSource
 
 
 def indexer(
-    vLLM_path: str, chunk_size: int, data_directory: dict[str, str]) -> int:
+    vLLM_path: str, chunk_size: int, data_directory: dict[str, str]
+) -> int:
 
     # - Load all files -
     print_log(f"Reading files in '{vLLM_path}'...")
@@ -40,7 +41,7 @@ def indexer(
     # Go throught all files and, if the file is not empty, add the
     # MinimalSource to the metadata list, and the content is the texts list.
     # The metadata will be the corpus.
-    for file_path, content in tqdm(loaded_files, desc='Chunking'):
+    for file_path, content in tqdm(loaded_files, desc="Chunking"):
         chunked_file = the_chunker.process(file_path, content)
 
         if chunked_file:
@@ -62,7 +63,8 @@ def indexer(
 def _saving_chunks(
     metadatas_list: list[MinimalSource],
     texts_list: list[str],
-    data_directory: dict[str, str]) -> int:
+    data_directory: dict[str, str],
+) -> int:
     print_rule()
     print("Saving raw chunks dataset...")
 
@@ -70,32 +72,37 @@ def _saving_chunks(
     chunks_dataset: list[dict[str, str]] = []
     for metadata, raw_text in tqdm(
         zip(metadatas_list, texts_list),
-        desc='Saving Chunks',
-        total=len(metadatas_list)):
-
-        chunks_dataset.append({
-            "file_path": metadata["file_path"],
-            "first_character_index": metadata["first_character_index"],
-            "last_character_index": metadata["last_character_index"],
-            "content": raw_text
-        })
+        desc="Saving Chunks",
+        total=len(metadatas_list),
+    ):
+        chunks_dataset.append(
+            {
+                "file_path": metadata["file_path"],
+                "first_character_index": metadata["first_character_index"],
+                "last_character_index": metadata["last_character_index"],
+                "content": raw_text,
+            }
+        )
 
     # Saving the structure in a json file
-    chunks_file_path = os.path.join(data_directory['chunk_dir'],
-                                    'chunks_db.json')
+    chunks_file_path = os.path.join(
+        data_directory["chunk_dir"], "chunks_db.json"
+    )
 
-    with open(chunks_file_path, 'w', encoding='utf-8') as f:
+    with open(chunks_file_path, "w", encoding="utf-8") as f:
         json.dump(chunks_dataset, f, ensure_ascii=False, indent=4)
 
     print_log(f"Chunks database saved under '{chunks_file_path}'")
-    return (chunks_dataset)
+    return chunks_dataset
+
 
 def _build_index(
     metadatas_list: list[MinimalSource],
     texts_list: list[str],
-    data_directory: dict[str, str]) -> None:
+    data_directory: dict[str, str],
+) -> None:
     # Create a stemmer (get the root of multiples same words)
-    stemmer = Stemmer.Stemmer('english')
+    stemmer = Stemmer.Stemmer("english")
 
     # - Constructing the index -
     print_rule()
@@ -103,14 +110,18 @@ def _build_index(
     retriever = bm25s.BM25()
     # Tokenize the corpus and only keep the ids
     tokens = bm25s.tokenize(
-        texts_list, stopwords='en', stemmer=stemmer, show_progress=True,
-        leave=True
+        texts_list,
+        stopwords="en",
+        stemmer=stemmer,
+        show_progress=True,
+        leave=True,
     )
     # Index the corpus
     retriever.index(tokens, show_progress=True, leave_progress=True)
     # Save the array and the corpus
     retriever.save(
-        data_directory['bm25_dir'], corpus=metadatas_list, show_progress=True)
+        data_directory["bm25_dir"], corpus=metadatas_list, show_progress=True
+    )
 
     print_rule()
     print_log(f"BM25 index saved in '{data_directory['bm25_dir']}'.")

@@ -15,7 +15,4 @@ from src.indexer.utils import extract_archive
 from src.indexer.index import indexer
 
 
-__all__ = [
-    'extract_archive',
-    'indexer'
-]
+__all__ = ["extract_archive", "indexer"]

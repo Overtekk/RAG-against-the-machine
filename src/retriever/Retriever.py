@@ -19,7 +19,7 @@ from src import RAGError
 from src.utils import print_log, print_rule, is_folder_exist, is_file_exist
 
 
-class RetrieverEngine():
+class RetrieverEngine:
     def __init__(self, k: int, directories_list: dict[str, str]):
         self._k = k
         self.directories_list = directories_list
@@ -31,7 +31,10 @@ class RetrieverEngine():
 
         # Retrieve the best match documents from the corpus
         indices, scores = self._retriever.retrieve(
-            query_token, k=self._k, show_progress=True, leave_progress=False,
+            query_token,
+            k=self._k,
+            show_progress=True,
+            leave_progress=False,
         )
 
         # Transform the ndarray into a single list
@@ -47,9 +50,10 @@ class RetrieverEngine():
             except IndexError:
                 raise RAGError(
                     "Error while trying to find the index in the retriever. "
-                    "Re-run the index command.")
+                    "Re-run the index command."
+                )
             # Add the score
-            chunk['score'] = float(score)
+            chunk["score"] = float(score)
             # Add everything into the new dict
             retrieve_chunk.append(chunk)
 
@@ -61,48 +65,52 @@ class RetrieverEngine():
 
     def _load_database(self) -> None:
         # - SECURITY -
-        chunk_db_file = (
-            os.path.join(self.directories_list['chunk_dir'], 'chunks_db.json'))
+        chunk_db_file = os.path.join(
+            self.directories_list["chunk_dir"], "chunks_db.json"
+        )
         self._security_checker(chunk_db_file)
 
         # - Load the index folder with bm25 -
-        print_rule('BM25 Database')
+        print_rule("BM25 Database")
         print_log("Loading the BM25 database...")
         try:
-            self._retriever = bm25s.BM25.load(self.directories_list['bm25_dir'],
-                                            load_corpus=False)
+            self._retriever = bm25s.BM25.load(
+                self.directories_list["bm25_dir"], load_corpus=False
+            )
         except FileNotFoundError as e:
             raise RAGError(f"{e}\nRe-run the index command.")
-        print_log("✅ Done", 'green')
+        print_log("✅ Done", "green")
 
         # - Load the chunks database -
-        print_rule('Chunk Database')
+        print_rule("Chunk Database")
         print_log("Loading the chunks database...")
-        with open(chunk_db_file, 'r') as f:
+        with open(chunk_db_file, "r") as f:
             try:
                 self._chunks = json.load(f)
             except JSONDecodeError:
                 raise RAGError("Error while trying to open 'chunk_db.json'")
 
-        print_log("✅ Done", 'green')
+        print_log("✅ Done", "green")
         print_rule()
 
     def _security_checker(self, chunk_db_file: str) -> None:
         # - BM25 Directory -
         # Check that the BM25 directory exist.
-        if not is_folder_exist(self.directories_list['bm25_dir']):
+        if not is_folder_exist(self.directories_list["bm25_dir"]):
             raise RAGError(
                 "BM25 indexing directory doesn't exist. Cannot launch the "
-                "retriever.\nRun the index command first.")
+                "retriever.\nRun the index command first."
+            )
         # Check that is not empty
-        if len(os.listdir(self.directories_list['bm25_dir'])) == 0:
+        if len(os.listdir(self.directories_list["bm25_dir"])) == 0:
             raise RAGError("Cannot retrieve. The BM25 folder is empty.")
 
         # - Chunks Directory -
         # Check that the database exist
         if not is_file_exist(chunk_db_file):
             raise RAGError(
-                "Chunk database doesn't exist.\nRun the index command first.")
+                "Chunk database doesn't exist.\nRun the index command first."
+            )
         # Check that the file is not empty
         if os.path.getsize(chunk_db_file) == 0:
             raise RAGError("Chunk database is empty. Is everything ok?")
