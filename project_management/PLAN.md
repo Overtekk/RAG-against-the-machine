@@ -42,7 +42,7 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
 | Return top-k most relevant code snippets for any querry | ✅ |
 | Each result must include: `file_path`, `first_character_index`, `last_character_index` | ✅ |
 | Support batch processing of multiple questions from JSON datasets | ✅ |
-| Achieve at least 80% recall@5 on docs questions and 50% on code questions | ❌ |
+| Achieve at least 80% recall@5 on docs questions and 50% on code questions | ✅ |
 
 #### 3.3 Answer Generation System
 
@@ -108,7 +108,7 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
 | Performance indexing time: 5 minutes max | ✅ |
 | Performance cold start latency: 60 seconds max | ❌ |
 | Performance warm retrieval throughput: 90 seconds maximum for 1000 questions | ❌ |
-| Performance recall@5: 80% on docs questions, 50% on code | ❌ |
+| Performance recall@5: 80% on docs questions, 50% on code | ✅ |
 
 ### 7. Bonus
 
