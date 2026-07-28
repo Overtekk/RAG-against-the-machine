@@ -18,5 +18,6 @@ moulinette/
 data/processed/
 data/raw/
 data/output/
+datasets_public.zip
 # Test
 data/datasets/test.json

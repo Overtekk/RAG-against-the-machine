@@ -14,7 +14,7 @@
 | :-------: | :----: |
 | Using the model **Qwen/Qwen3-0.6B** | ❌ |
 | Provide a CLI using Python Fire | ✅ |
-| Implemente a progress bars using `tqdm` | ❌ |
+| Implemente a progress bars using `tqdm` | ✅ |
 | Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ✅ |
 | Flake8 norm | ❌ |
 | Mypy norm | ❌ |
@@ -26,22 +26,22 @@
 
 | Objective | Statut |
 | :-------: | :----: |
-| Give the LLM the VLLM repo (all files) | ❌ |
-| Implement intelligent chunking for Python code and Markdown documentation | ❌ |
-| Create a searchable knowledge index using `TF-IDF` or `BM25` | ❌ |
-| Chunking Strategy for Python code chuncking | ❌ |
-| Chunking Strategy for Text chunking | ❌ |
-Configure maximum chunk size via CLI argument (maximum 2000 characters) | ❌ |
-| Store the index for fast retrieval (max 5 minutes indexing time) | ❌ |
+| Give the LLM the VLLM repo (all files) | ✅ |
+| Implement intelligent chunking for Python code and Markdown documentation | ✅ |
+| Create a searchable knowledge index using `TF-IDF` or `BM25` | ✅ |
+| Chunking Strategy for Python code chuncking | ✅ |
+| Chunking Strategy for Text chunking | ✅ |
+Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
+| Store the index for fast retrieval (max 5 minutes indexing time) | ✅ |
 
 #### 3.2 Retrieval System
 
 | Objective | Statut |
 | :-------: | :----: |
-| Implement semantic search over the indexed knowledge base | ❌ |
-| Return top-k most relevant code snippets for any querry | ❌ |
-| Each result must include: `file_path`, `first_character_index`, `last_character_index` | ❌ |
-| Support batch processing of multiple questions from JSON datasets | ❌ |
+| Implement semantic search over the indexed knowledge base | ✅ |
+| Return top-k most relevant code snippets for any querry | ✅ |
+| Each result must include: `file_path`, `first_character_index`, `last_character_index` | ✅ |
+| Support batch processing of multiple questions from JSON datasets | ✅ |
 | Achieve at least 80% recall@5 on docs questions and 50% on code questions | ❌ |
 
 #### 3.3 Answer Generation System
@@ -74,9 +74,9 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ❌ |
 
 | Objective | Statut |
 | :-------: | :----: |
-| `index` (index the repository) implemented | ❌ |
-| `search` (search for a single query) implemented | ❌ |
-| `search_dataset` (process multiple questions and output search results) implemented | ❌ |
+| `index` (index the repository) implemented | ✅ |
+| `search` (search for a single query) implemented | ✅ |
+| `search_dataset` (process multiple questions and output search results) implemented | ✅ |
 | `answer` (answer a single question with context) | ❌ |
 | `answer_dataset` (generate answers from search results) | ❌ |
 | `evaluate` (evaluate search results against ground truth) | ❌ |
@@ -99,13 +99,13 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ❌ |
 | Search operations: `StudentSearchResults` models with `search_results` and `k` | ✅ |
 | Answer generation: `StudentSearchResultsAndAnswer` model with `search_results` and `k` | ✅ |
 | Source information: `MinimalSource` contains `file_path`, `first_character_index`, `last_character_index` | ✅ |
-| Output strictly formatted as a comprehensive JSON file respecting the Pydantic models | | ❌ |
+| Output strictly formatted as a comprehensive JSON file respecting the Pydantic models | | ✅ |
 
 ### 6. Evaluation
 
 | Objective | Statut |
 | :-------: | :----: |
-| Performance indexing time: 5 minutes max | ❌ |
+| Performance indexing time: 5 minutes max | ✅ |
 | Performance cold start latency: 60 seconds max | ❌ |
 | Performance warm retrieval throughput: 90 seconds maximum for 1000 questions | ❌ |
 | Performance recall@5: 80% on docs questions, 50% on code | ❌ |
