@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 15:10:13 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 16:58:30 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -72,23 +72,36 @@ class ChunkerEngine:
 
         # Split the text into small chunks
         for sub_txt in text_splitter.split_text(content):
+            if not sub_txt:
+                continue
+
             # Find the first index of the chunk
             sub_first_index = content.find(sub_txt, index)
+
+            # If failed. Retry from the beginning
+            if sub_first_index == -1:
+                sub_first_index = content.find(sub_txt)
+            # Skip if didn´t find it
+            if sub_first_index == -1:
+                continue
+
             # Find the last index of the chunk
             sub_last_index = sub_first_index + len(sub_txt)
             # Update the index
             index = sub_last_index
 
-            # Add the chunk to the list as MinimalSource
-            chunked_txt.append(
-                (
-                    MinimalSource(
-                        file_path=file_path,
-                        first_character_index=sub_first_index,
-                        last_character_index=sub_last_index,
-                    ),
-                    sub_txt,
+            # If valids
+            if sub_last_index > sub_first_index >= 0:
+                # Add the chunk to the list as MinimalSource
+                chunked_txt.append(
+                    (
+                        MinimalSource(
+                            file_path=file_path,
+                            first_character_index=sub_first_index,
+                            last_character_index=sub_last_index,
+                        ),
+                        sub_txt,
+                    )
                 )
-            )
 
         return chunked_txt

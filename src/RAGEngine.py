@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 15:43:35 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 17:02:42 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -194,10 +194,27 @@ class RAGEngine:
         # 1. Index
         self.index()
         # 2. Search in the dataset
-        self.search_dataset("data/datasets/UnansweredQuestions/dataset_code_public.json", 10, "data/output/search_results/UnansweredQuestions")
-        self.search_dataset("data/datasets/UnansweredQuestions/dataset_docs_public.json", 10, "data/output/search_results/UnansweredQuestions")
-        self.search_dataset("data/datasets/AnsweredQuestions/dataset_code_public.json", 10, "data/output/search_results/AnsweredQuestions")
-        self.search_dataset("data/datasets/AnsweredQuestions/dataset_docs_public.json", 10, "data/output/search_results/AnsweredQuestions")
+        self.search_dataset(
+            "data/datasets/UnansweredQuestions/dataset_code_public.json",
+            10,
+            "data/output/search_results/UnansweredQuestions",
+        )
+        self.search_dataset(
+            "data/datasets/UnansweredQuestions/dataset_docs_public.json",
+            10,
+            "data/output/search_results/UnansweredQuestions",
+        )
+        self.search_dataset(
+            "data/datasets/AnsweredQuestions/dataset_code_public.json",
+            10,
+            "data/output/search_results/AnsweredQuestions",
+        )
+        self.search_dataset(
+            "data/datasets/AnsweredQuestions/dataset_docs_public.json",
+            10,
+            "data/output/search_results/AnsweredQuestions",
+        )
+
 
 # :--------------------:
 #   PRIVATES FUNCTIONS

@@ -41,7 +41,13 @@ class RetrieverEngine:
 
     def retrieve(self, query: str) -> list[MinimalSource]:
         # Tokenize the query
-        query_token = bm25s.tokenize(query, show_progress=True, leave=False, stopwords="en", stemmer=self.stemmer)
+        query_token = bm25s.tokenize(
+            query,
+            show_progress=True,
+            leave=False,
+            stopwords="en",
+            stemmer=self.stemmer,
+        )
 
         # Retrieve the best match documents from the corpus
         indices, scores = self._retriever.retrieve(
@@ -128,14 +134,15 @@ class RetrieverEngine:
 
             except JSONDecodeError:
                 print_log(
-                    f"⚠️  Error while trying to open '{file_path}'. "
-                    "Skipping\n", "gold1"
+                    f"⚠️  Error while trying to open '{file_path}'. Skipping\n",
+                    "gold1",
                 )
                 return None
             except ValidationError:
                 print_log(
                     f"⚠️  '{file_path}' does not seem to be an valid model. "
-                    "Skipping\n", "gold1"
+                    "Skipping\n",
+                    "gold1",
                 )
                 return None
 
