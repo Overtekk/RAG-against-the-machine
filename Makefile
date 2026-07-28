@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 11:31:17 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 14:39:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -45,7 +45,8 @@ save_directory	?= "data/output/search_results/"
 
 .PHONY:		all install run run-debug clean fclean delete-uv  \
 			lint lint-strict lint-format \
-			index search search_dataset answer answer_dataset eval
+			index search search_dataset answer answer_dataset eval \
+			moulinette moulinette_answer moulinette_search
 .SILENT:
 
 all:				install run
@@ -85,6 +86,17 @@ answer_dataset:		install
 eval:				install
 					@clear
 					$(RUN) evaluate_student_search_results
+
+moulinette:
+					@echo "Use either 'moulinette_search' or 'moulinette_answer'"
+
+moulinette_search:
+					chmod u+x run-moulinette.sh
+					./run-moulinette.sh evaluate_search
+
+moulinette_answer:
+					chmod u+x run-moulinette.sh
+					./run-moulinette.sh evaluate_answer
 
 run-debug:			install
 					@clear

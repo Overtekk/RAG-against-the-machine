@@ -21,3 +21,4 @@ data/output/
 datasets_public.zip
 # Test
 data/datasets/test.json
+ignore/
