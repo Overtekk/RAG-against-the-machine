@@ -6,13 +6,14 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 17:34:27 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 15:08:06 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import os
 import bm25s
 import json
+import Stemmer
 from pathlib import Path
 from json import JSONDecodeError
 from pydantic import ValidationError
@@ -35,9 +36,12 @@ class RetrieverEngine:
         self._directories_list = directories_list
         self._load_database()
 
+        # Create a stemmer (get the root of multiples same words)
+        self.stemmer = Stemmer.Stemmer("english")
+
     def retrieve(self, query: str) -> list[MinimalSource]:
         # Tokenize the query
-        query_token = bm25s.tokenize(query, show_progress=True, leave=False)
+        query_token = bm25s.tokenize(query, show_progress=True, leave=False, stopwords="en", stemmer=self.stemmer)
 
         # Retrieve the best match documents from the corpus
         indices, scores = self._retriever.retrieve(

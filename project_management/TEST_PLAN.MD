@@ -1,1 +1,6 @@
 - Crash when using `uv run python -m src index 2` ✅ -> remove the argument for the vlMM using the default path or zip only
+
+Moulinette search results:
+1. Code then docs
+- Answered: 22.2% / 51%
+- Unanswered: 22.2% / 51%

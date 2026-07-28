@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 10:12:28 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 15:10:13 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -40,10 +40,12 @@ class ChunkerEngine:
     def _chunk_py_file(
         self, file_path: str, content: str
     ) -> list[tuple[MinimalSource, str]]:
+        CHUNK_OVERLAP: int = 100
+
         python_splitter = RecursiveCharacterTextSplitter.from_language(
             language=Language.PYTHON,
             chunk_size=self._chunk_size,
-            chunk_overlap=0,
+            chunk_overlap=CHUNK_OVERLAP,
         )
 
         return self._split_text(python_splitter, file_path, content)

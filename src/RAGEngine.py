@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 14:58:50 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 15:43:35 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -185,11 +185,19 @@ class RAGEngine:
         student_answer_path: str = PathConfig.DEFAULT_STUDENT_ANSWER_PATH,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
         k: int = 10,
-        max_context_lenght: int = 2000,
+        max_context_length: int = 2000,
     ) -> None:
         # Check paths
         _check_path(dataset_path)
 
+    def execute_pipeline(self) -> None:
+        # 1. Index
+        self.index()
+        # 2. Search in the dataset
+        self.search_dataset("data/datasets/UnansweredQuestions/dataset_code_public.json", 10, "data/output/search_results/UnansweredQuestions")
+        self.search_dataset("data/datasets/UnansweredQuestions/dataset_docs_public.json", 10, "data/output/search_results/UnansweredQuestions")
+        self.search_dataset("data/datasets/AnsweredQuestions/dataset_code_public.json", 10, "data/output/search_results/AnsweredQuestions")
+        self.search_dataset("data/datasets/AnsweredQuestions/dataset_docs_public.json", 10, "data/output/search_results/AnsweredQuestions")
 
 # :--------------------:
 #   PRIVATES FUNCTIONS
