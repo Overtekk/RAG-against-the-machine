@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 17:02:42 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 17:29:08 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -24,6 +24,7 @@ from src.utils import (
 from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
 from src.retriever import RetrieverEngine
+from src.answer import AnswerEngine
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -165,7 +166,26 @@ class RAGEngine:
 
     @func_timer
     def answer(self, query: str, k: int = 10) -> None:
-        pass
+        # - SECURITY -
+        try:
+            _check_value_range(
+                k,
+                RAGConfig.MIN_K_CHUNKS,
+                RAGConfig.MAX_K_CHUNKS,
+                "token budget",
+            )
+        except RAGError as e:
+            raise ValueError(e)
+        if not query or not isinstance(query, str):
+            raise ValueError("Please, provide a valid question.")
+
+        try:
+            # Init the engine
+            engine = AnswerEngine(k)
+            engine.answer("Comment calculer 4 + 4 ?")
+
+        except RAGError as e:
+            raise ValueError(e)
 
     @func_timer
     def answer_dataset(

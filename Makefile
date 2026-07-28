@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 14:39:29 by roandrie        ###   ########.fr        #
+#  Updated: 2026/07/28 17:15:06 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -31,7 +31,7 @@ RUN				=	$(UV_PYTHON) -m $(SRC)
 
 # -- Index command --
 max_chunk_size 	?=	2000
-# -- Search command --
+# -- Search/Answer command --
 query			?=
 k				?= 10
 # -- Search dataset command --
@@ -61,7 +61,7 @@ install:
 
 run:				install
 					@clear
-					$(RUN)
+					$(RUN) execute_pipeline
 
 index:				install
 					@clear
@@ -77,7 +77,7 @@ search_dataset:		install
 
 answer:				install
 					@clear
-					$(RUN) answer
+					$(RUN) answer --query="$(query)" --k=$(k)
 
 answer_dataset:		install
 					@clear

@@ -124,6 +124,10 @@ This project must have a Makefile and the following rules:
 | [Documentation for `langchain` - text splitter](https://docs.langchain.com/oss/python/integrations/splitters) | Documentation for using `langchain-text-splitters`: used to chunk markdown and text files.|
 | [Documentation for `langchain` - code splitter](https://docs.langchain.com/oss/python/integrations/splitters/code_splitter) | Documentation for using `langchain-text-splitters`: used to chunk python code file (and other programmation language). |
 
+### 📑 Documentation for the LLM
+| Resource | Description |
+| :------: | :---------: |
+| [Huggingface - Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | Global documentation about the model ` Qwen3-0.6B` |
 
 ### 🐍 Specific Libraries Documentation
 | Resource | Description |
