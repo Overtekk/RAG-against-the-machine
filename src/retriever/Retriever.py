@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 15:08:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/06 15:01:47 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -19,7 +19,6 @@ from json import JSONDecodeError
 from pydantic import ValidationError
 from src import RAGError
 from src.model import (
-    MinimalSource,
     ChunkSearchResult,
     UnansweredQuestion,
     AnsweredQuestion,
@@ -39,7 +38,7 @@ class RetrieverEngine:
         # Create a stemmer (get the root of multiples same words)
         self.stemmer = Stemmer.Stemmer("english")
 
-    def retrieve(self, query: str) -> list[MinimalSource]:
+    def retrieve(self, query: str) -> list[MinimalSearchResults]:
         # Tokenize the query
         query_token = bm25s.tokenize(
             query,
@@ -62,7 +61,7 @@ class RetrieverEngine:
         top_k_scores = scores[0]
 
         # Add the content and score to the result of the retriever
-        retrieve_chunks: list[MinimalSource] = []
+        retrieve_chunks: list[MinimalSearchResults] = []
         for index, score in zip(top_k_indices, top_k_scores):
             try:
                 # Find the correspond chunk in the database, copy its data

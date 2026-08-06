@@ -128,6 +128,8 @@ This project must have a Makefile and the following rules:
 | Resource | Description |
 | :------: | :---------: |
 | [Huggingface - Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) | Global documentation about the model ` Qwen3-0.6B` |
+| [Huggingface - Github](https://github.com/huggingface/transformers/blob/main/docs/source/en/model_doc/qwen3.md) | Using Qwen3 with pipeline |
+| [Huggingface - Transformers](https://huggingface.co/docs/transformers/en/quicktour) | How tu use the transformers module |
 
 ### 🐍 Specific Libraries Documentation
 | Resource | Description |
@@ -140,6 +142,7 @@ This project must have a Makefile and the following rules:
 | Resource | Description |
 | :------: | :---------: |
 | [fcaval - github repo](https://github.com/fcaval42/RAG_AgainstTheMachine) | 42 student repo helping me with the global architecture when stuck. |
+| [sousampere - github repo](https://github.com/sousampere/42_RAG_2.0/blob/main/src/llm.py) | 42 student repo helping me with the global architecture when stuck. |
 | [Documentation for `ruff`](https://docs.astral.sh/ruff/) | Official documentation for the `ruff` library which is a code formatter. Faster than flake8 and can format the code itself |
 
 

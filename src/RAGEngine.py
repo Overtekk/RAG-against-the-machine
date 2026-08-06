@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 17:29:08 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/06 15:09:11 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -25,6 +25,7 @@ from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
 from src.retriever import RetrieverEngine
 from src.answer import AnswerEngine
+from src.model import MinimalSearchResults
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -93,7 +94,7 @@ class RAGEngine:
         self,
         query: str,
         k: int = 10,
-    ) -> None:
+    ) -> MinimalSearchResults:
         # - SECURITY -
         try:
             _check_value_range(
@@ -125,6 +126,7 @@ class RAGEngine:
                 f"{index.last_character_index}]\n"
             )
         print(result_msg)
+        return result
 
     @func_timer
     def search_dataset(
@@ -180,9 +182,12 @@ class RAGEngine:
             raise ValueError("Please, provide a valid question.")
 
         try:
+            # Search the database for the provided query
+            search_result = self.search(query, k)
+
             # Init the engine
             engine = AnswerEngine(k)
-            engine.answer("Comment calculer 4 + 4 ?")
+            engine.answer(search_result, query)
 
         except RAGError as e:
             raise ValueError(e)

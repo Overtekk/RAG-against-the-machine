@@ -6,60 +6,77 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 17:58:28 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/06 14:48:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import pipeline
+from accelerate import Accelerator
+from src.model import MinimalSearchResults
 from src.config import RAGError
+from src.utils import print_log
+
+MAX_GENERATION_LENGHT: int = 300
 
 
 class AnswerEngine:
     def __init__(self, k: int, llm_model: str = "Qwen/Qwen3-0.6B") -> None:
-        self.k = k
-        self.llm_model = llm_model
+        self._k = k
+        self._llm_model = llm_model
 
         # Load the LLM
         self._load_llm()
 
-    def answer(self, query: str) -> str:
-        # Create the prompt
-        prompt: str = query
+    def answer(self, source: list[MinimalSearchResults], prompt: str) -> str:
+        if not source:
+            return "Invalid source or empty source. Discarding..."
 
-        text = self.tokenizer.apply_chat_template(
-            prompt, tokenize=False, add_generation_prompt=True, enable_thinking=True
-        )
-        model_inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
-        generated_ids = self.model.generate(
-            **model_inputs,
-            max_new_tokens=200
-        )
-        output_ids = generated_ids[0][len(model_inputs.input_ids[0]):].tolist()
+        message = self._generate_prompt(source, prompt)
+        answer = self._generate_answer(message)
+        print(answer)
 
-        # parsing thinking content
-        try:
-            # rindex finding 151668 (</think>)
-            index = len(output_ids) - output_ids[::-1].index(151668)
-        except ValueError:
-            index = 0
+    # :-----------------:
+    #   PRIVATE METHODS
+    # :-----------------:
 
-        thinking_content = self.tokenizer.decode(output_ids[:index], skip_special_tokens=True).strip("\n")
-        content = self.tokenizer.decode(output_ids[index:], skip_special_tokens=True).strip("\n")
+    def _generate_answer(self, message: str) -> str:
+        output = self._pipe(message, max_length=MAX_GENERATION_LENGHT)
+        return output[0]
 
-        print("thinking content:", thinking_content)
-        print("content:", content)
+    def _generate_prompt(self, source: list[MinimalSearchResults], prompt: str) -> str:
+        # Prepare the prompt (/no_think prevent the model to using the <think>)
+        message = [
+            {
+                "role": "system",
+                "content": ("Answer the user\'s prompt using ONLY the provided"
+                            "sources. Your answer will be concise. The sources"
+                            "are: \n\n"
+                            f"{source.retrieved_sources}")
+            },
+            {
+                "role": "user",
+                "content": f"User\' prompt: {prompt} /no_think"
+            }
+        ]
+
+        return message
 
     # :------------:----:
     #   Private methods
     # :-----------------:
 
     def _load_llm(self) -> None:
-        # Load the tokenizer and the model
         try:
+            print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
 
-            self.tokenizer = AutoTokenizer.from_pretrained(self.llm_model)
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.llm_model, torch_dtype="auto", device_map="auto"
+            # Auto detect an available accelerator
+            device = Accelerator().device
+
+            # Load the model throught pipeline
+            self._pipe = pipeline(
+                task="text-generation",
+                model=self._llm_model,
+                device=device
             )
 
         except Exception as e:
