@@ -6,17 +6,17 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/17 13:52:10 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/17 16:28:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-import torch
+from tqdm import tqdm
 from transformers import pipeline
 from src.model import MinimalSearchResults
 from src.config import RAGError
 from src.utils import print_log
 
-MAX_GENERATION_LENGHT: int = 300
+MAX_GENERATION_LENGHT: int = 256
 
 
 class AnswerEngine:
@@ -27,13 +27,14 @@ class AnswerEngine:
         # Load the LLM
         self._load_llm()
 
-    def answer(self, source: list[MinimalSearchResults], prompt: str) -> str:
+    def answer(self, source: list[MinimalSearchResults], question_list: list[str]) -> str:
         if not source:
             return "Invalid source or empty source. Discarding..."
 
-        message = self._generate_prompt(source, prompt)
-        answer = self._generate_answer(message)
-        print(answer)
+        for question in tqdm(question_list, desc="Generating"):
+            message = self._generate_prompt(source, question)
+            answer = self._generate_answer(message)
+            print(answer)
 
     # :-----------------:
     #   PRIVATE METHODS
@@ -81,7 +82,7 @@ class AnswerEngine:
                 task="text-generation",
                 model=self._llm_model,
                 device=device,
-                torch_dtype=torch.bfloat16
+                torch_dtype="auto"
             )
 
         except Exception as e:
