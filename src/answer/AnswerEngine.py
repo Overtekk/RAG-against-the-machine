@@ -6,12 +6,12 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/06 14:48:31 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/17 13:52:10 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
+import torch
 from transformers import pipeline
-from accelerate import Accelerator
 from src.model import MinimalSearchResults
 from src.config import RAGError
 from src.utils import print_log
@@ -40,10 +40,15 @@ class AnswerEngine:
     # :-----------------:
 
     def _generate_answer(self, message: str) -> str:
-        output = self._pipe(message, max_length=MAX_GENERATION_LENGHT)
-        return output[0]
+        output = self._pipe(message, max_new_tokens=MAX_GENERATION_LENGHT)
+        return output[0]["generated_text"]
 
     def _generate_prompt(self, source: list[MinimalSearchResults], prompt: str) -> str:
+        # Preparing source formatting
+        formatted_source: dict[int, str] = {}
+        for i, result in enumerate(source):
+            formatted_source[i] = result.content
+
         # Prepare the prompt (/no_think prevent the model to using the <think>)
         message = [
             {
@@ -51,11 +56,11 @@ class AnswerEngine:
                 "content": ("Answer the user\'s prompt using ONLY the provided"
                             "sources. Your answer will be concise. The sources"
                             "are: \n\n"
-                            f"{source.retrieved_sources}")
+                            f"{formatted_source}")
             },
             {
                 "role": "user",
-                "content": f"User\' prompt: {prompt} /no_think"
+                "content": f"User\' prompt: {prompt}"
             }
         ]
 
@@ -69,14 +74,14 @@ class AnswerEngine:
         try:
             print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
 
-            # Auto detect an available accelerator
-            device = Accelerator().device
+            device = "cpu"
 
             # Load the model throught pipeline
             self._pipe = pipeline(
                 task="text-generation",
                 model=self._llm_model,
-                device=device
+                device=device,
+                torch_dtype=torch.bfloat16
             )
 
         except Exception as e:

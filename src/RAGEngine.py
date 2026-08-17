@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/06 15:09:11 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/17 13:46:37 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -94,7 +94,8 @@ class RAGEngine:
         self,
         query: str,
         k: int = 10,
-    ) -> MinimalSearchResults:
+        verbose: bool = True
+    ) -> list[MinimalSearchResults]:
         # - SECURITY -
         try:
             _check_value_range(
@@ -119,13 +120,15 @@ class RAGEngine:
         print_log("✅ Done\n", "green")
 
         # Go throught the result and print the final results
-        result_msg = ""
-        for index in result:
-            result_msg += (
-                f"{index.file_path} [{index.first_character_index}:"
-                f"{index.last_character_index}]\n"
-            )
-        print(result_msg)
+        if verbose:
+            result_msg = ""
+            for index in result:
+                result_msg += (
+                    f"{index.file_path} [{index.first_character_index}:"
+                    f"{index.last_character_index}]\n"
+                )
+            print(result_msg)
+            return None
         return result
 
     @func_timer
@@ -183,7 +186,7 @@ class RAGEngine:
 
         try:
             # Search the database for the provided query
-            search_result = self.search(query, k)
+            search_result = self.search(query, k, False)
 
             # Init the engine
             engine = AnswerEngine(k)
