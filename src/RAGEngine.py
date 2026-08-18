@@ -6,12 +6,13 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/17 13:46:37 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/18 15:02:41 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 from pathlib import Path
 from typing import Any
+from src.model.models import ChunkSearchResult
 from src.utils import (
     is_folder_exist,
     is_file_exist,
@@ -25,7 +26,6 @@ from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
 from src.retriever import RetrieverEngine
 from src.answer import AnswerEngine
-from src.model import MinimalSearchResults
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -95,7 +95,7 @@ class RAGEngine:
         query: str,
         k: int = 10,
         verbose: bool = True
-    ) -> list[MinimalSearchResults]:
+    ) -> list[ChunkSearchResult]:
         # - SECURITY -
         try:
             _check_value_range(
@@ -170,7 +170,7 @@ class RAGEngine:
             raise ValueError(e)
 
     @func_timer
-    def answer(self, query: str, k: int = 10) -> None:
+    def answer(self, query: str, k: int = 10, context_limit: int = 500) -> None:
         # - SECURITY -
         try:
             _check_value_range(
@@ -179,6 +179,7 @@ class RAGEngine:
                 RAGConfig.MAX_K_CHUNKS,
                 "token budget",
             )
+            _check_value_range(context_limit, RAGConfig.MIN_CONTEXT_LIMIT, RAGConfig.MAX_CONTEXT_LIMIT, "context limit")
         except RAGError as e:
             raise ValueError(e)
         if not query or not isinstance(query, str):
@@ -189,23 +190,44 @@ class RAGEngine:
             search_result = self.search(query, k, False)
 
             # Init the engine
-            engine = AnswerEngine(k)
-            engine.answer(search_result, query)
+            engine = AnswerEngine(context_limit)
+            results = engine.answer(search_result, query)
 
         except RAGError as e:
             raise ValueError(e)
+
+        print_with_color("\nRAG: ", "bright_yellow")
+        print_with_color(f"{results.answer}\n", "white")
 
     @func_timer
     def answer_dataset(
         self,
         student_search_results_path: str = (
-            PathConfig.DEFAULT_STUDENT_SEARCH_RESULTS_PATH
+            PathConfig.DEFAULT_SAVE_DIRECTORY
         ),
-        save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
+        save_directory: str = PathConfig.DEFAULT_ANSWER_SAVE_DIRECTORY,
+        context_limit: int = 500
     ) -> None:
-        # Check paths
-        _check_path(student_search_results_path)
+        # - SECURITY -
+        try:
+            _check_value_range(context_limit, RAGConfig.MIN_CONTEXT_LIMIT, RAGConfig.MAX_CONTEXT_LIMIT, "context limit")
+        except RAGError as e:
+            raise ValueError(e)
         _check_path(save_directory, True)
+
+        try:
+            # Init the engine
+            engine = AnswerEngine(context_limit)
+
+            # Go throught the dataset path given
+            path = Path(student_search_results_path)
+            for file in ([path] if path.is_file() else list(path.rglob("*.json"))):
+                extracted = engine.extract_dataset(file)
+                if extracted:
+                    pass
+
+        except RAGError as e:
+            raise ValueError(e)
 
     @func_timer
     def evaluate_student_search_results(

@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:11:55 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 17:30:46 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/18 13:58:07 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -126,6 +126,7 @@ class StudentSearchResultsAndAnswer(BaseModel):
 
     Attributes:
         search_results (list): list of answers results.
+        k (int): Number of results requested.
     """
 
     search_results: list[MinimalAnswer]

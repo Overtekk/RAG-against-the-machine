@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/15 10:29:07 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 11:18:57 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/18 11:18:32 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,9 +16,7 @@ from enum import Enum, IntEnum
 class PathConfig(str, Enum):
     DEFAULT_DATASET_PATH = "data/datasets/"
     DEFAULT_SAVE_DIRECTORY = "data/output/search_results/"
-    DEFAULT_STUDENT_SEARCH_RESULTS_PATH = (
-        "data/output/search_results/dataset_docs_public.json"
-    )
+    DEFAULT_ANSWER_SAVE_DIRECTORY = "data/output/search_results_and_answer/"
     DEFAULT_STUDENT_ANSWER_PATH = (
         "data/output/search_results/dataset_docs_public.json"
     )
@@ -37,6 +35,8 @@ class RAGConfig(IntEnum):
     MAX_CHUNK_SIZE = 2000
     MIN_K_CHUNKS = 0
     MAX_K_CHUNKS = 1000
+    MIN_CONTEXT_LIMIT = 1000
+    MAX_CONTEXT_LIMIT = 7000
 
 
 class RAGError(Exception):

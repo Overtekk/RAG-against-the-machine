@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/28 17:15:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/18 11:12:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -34,9 +34,11 @@ max_chunk_size 	?=	2000
 # -- Search/Answer command --
 query			?=
 k				?= 10
+context_limit	?= 5000
 # -- Search dataset command --
 dataset_path	?= "data/datasets/"
 save_directory	?= "data/output/search_results/"
+answer_save_directory ?= "data/output/search_results_and_answer/"
 
 
 # ===================
@@ -77,11 +79,11 @@ search_dataset:		install
 
 answer:				install
 					@clear
-					$(RUN) answer --query="$(query)" --k=$(k)
+					$(RUN) answer --query="$(query)" --k=$(k) --context_limit=$(context_limit)
 
 answer_dataset:		install
 					@clear
-					$(RUN) answer_dataset
+					$(RUN) answer_dataset --student_search_results_path=$(save_directory) --save_directory=$(answer_save_directory) --context_limit=$(context_limit)
 
 eval:				install
 					@clear
