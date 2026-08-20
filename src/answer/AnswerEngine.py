@@ -6,15 +6,16 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/18 15:04:00 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/20 09:48:12 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
+import json
 import uuid
 from rich.console import Console
 from pathlib import Path
 from transformers import pipeline
-from src.model import ChunkSearchResult, MinimalAnswer, StudentSearchResultsAndAnswer
+from src.model import ChunkSearchResult, StudentSearchResults, MinimalAnswer, StudentSearchResultsAndAnswer
 from src.config import RAGError
 from src.utils import print_log
 
@@ -53,13 +54,31 @@ class AnswerEngine:
 
         return MinimalAnswer.model_validate(answer_result)
 
-    def extract_dataset(self, filepath: Path) -> None:
-        if filepath is None:
-            raise RAGError("empty filepath.")
+    def answer_dataset(self, filepath: Path) -> MinimalAnswer:
+        search_result = self._create_dataset(filepath)
+        print(search_result)
+
 
     # :-----------------:
     #   PRIVATE METHODS
     # :-----------------:
+
+    def _load_llm(self) -> None:
+        try:
+            print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
+
+            # Load the model throught pipeline
+            self._pipe = pipeline(
+                task="text-generation",
+                model=self._llm_model,
+                device=0,
+                clean_up_tokenization_spaces=False
+            )
+            self._pipe.model.generation_config.max_new_tokens = MAX_NEW_TOKENS
+            self._pipe.generation_config.max_length = None
+
+        except Exception as e:
+            raise RAGError(e)
 
     def _generate_answer(self, message: str) -> str:
         output = self._pipe(message, return_full_text=False)
@@ -91,23 +110,12 @@ class AnswerEngine:
 
         return message
 
-    # :------------:----:
-    #   Private methods
-    # :-----------------:
 
-    def _load_llm(self) -> None:
-        try:
-            print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
+    def _create_dataset(self, filepath: Path) -> StudentSearchResults:
+        if filepath is None:
+            raise RAGError("empty filepath.")
 
-            # Load the model throught pipeline
-            self._pipe = pipeline(
-                task="text-generation",
-                model=self._llm_model,
-                device=0,
-                clean_up_tokenization_spaces=False
-            )
-            self._pipe.model.generation_config.max_new_tokens = MAX_NEW_TOKENS
-            self._pipe.generation_config.max_length = None
-
-        except Exception as e:
-            raise RAGError(e)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            dataset = StudentSearchResults.model_validate(data)
+            return dataset

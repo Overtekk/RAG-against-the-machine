@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/18 15:02:41 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/20 09:48:18 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -222,9 +222,8 @@ class RAGEngine:
             # Go throught the dataset path given
             path = Path(student_search_results_path)
             for file in ([path] if path.is_file() else list(path.rglob("*.json"))):
-                extracted = engine.extract_dataset(file)
-                if extracted:
-                    pass
+                result = engine.answer_dataset(file)
+                return
 
         except RAGError as e:
             raise ValueError(e)

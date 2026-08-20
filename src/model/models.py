@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:11:55 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/18 13:58:07 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/20 09:51:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -66,7 +66,7 @@ class AnsweredQuestion(UnansweredQuestion):
         answer: raw question.
     """
 
-    sources: list[MinimalSource]
+    sources: list[ChunkSearchResult]
     answer: str
 
 
@@ -93,7 +93,7 @@ class MinimalSearchResults(BaseModel):
 
     question_id: str
     question: str
-    retrieved_sources: list[MinimalSource]
+    retrieved_sources: list[ChunkSearchResult]
 
 
 class MinimalAnswer(MinimalSearchResults):
