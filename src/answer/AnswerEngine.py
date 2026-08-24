@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/20 09:48:12 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/24 16:36:18 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -52,11 +52,12 @@ class AnswerEngine:
             answer=clean_answer
         )
 
-        return MinimalAnswer.model_validate(answer_result)
+        return answer_result
 
     def answer_dataset(self, filepath: Path) -> MinimalAnswer:
         search_result = self._create_dataset(filepath)
-        print(search_result)
+        for item in search_result.search_results:
+            print(item.question)
 
 
     # :-----------------:
