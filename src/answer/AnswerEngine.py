@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/25 10:32:38 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/25 16:20:59 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -37,9 +37,9 @@ class AnswerEngine:
         if not source:
             return "Invalid source or empty source. Discarding..."
 
-        with console.status("[bold green]Generating answer..."):
-            message = self._generate_prompt(source, question)
-            raw_answer = self._generate_answer(message)
+        # with console.status("[bold green]Generating answer..."):
+        message = self._generate_prompt(source, question)
+        raw_answer = self._generate_answer(message)
         if not raw_answer:
             "ERROR: Answer generation failed."
 
@@ -62,9 +62,10 @@ class AnswerEngine:
         for item in tqdm(search_result.search_results, desc="Generating answers from dataset"):
             answer = self.answer(item.retrieved_sources, item.question, item.question_id if item.question_id is not None else None)
             list_answer.append(answer)
+            break
 
         answered_dataset = StudentSearchResultsAndAnswer (
-            search_result=list_answer,
+            search_results=list_answer,
             k=search_result.k
         )
 
@@ -75,21 +76,17 @@ class AnswerEngine:
     # :-----------------:
 
     def _load_llm(self) -> None:
-        try:
-            print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
+        print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
 
-            # Load the model throught pipeline
-            self._pipe = pipeline(
-                task="text-generation",
-                model=self._llm_model,
-                device=0,
-                clean_up_tokenization_spaces=False
-            )
-            self._pipe.model.generation_config.max_new_tokens = MAX_NEW_TOKENS
-            self._pipe.generation_config.max_length = None
-
-        except Exception as e:
-            raise RAGError(e)
+        # Load the model throught pipeline
+        self._pipe = pipeline(
+            task="text-generation",
+            model=self._llm_model,
+            device=0,
+            clean_up_tokenization_spaces=False
+        )
+        self._pipe.model.generation_config.max_new_tokens = MAX_NEW_TOKENS
+        self._pipe.generation_config.max_length = None
 
     def _generate_answer(self, message: str) -> str:
         output = self._pipe(message, return_full_text=False)
@@ -115,7 +112,7 @@ class AnswerEngine:
             },
             {
                 "role": "user",
-                "content": f"User\' prompt: {prompt}/no_think"
+                "content": f"User\' prompt: '{prompt}'/no_think"
             }
         ]
 

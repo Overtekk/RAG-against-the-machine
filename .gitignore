@@ -19,6 +19,7 @@ data/processed/
 data/raw/
 data/output/
 datasets_public.zip
+hf_cache
 # Test
 data/datasets/test.json
 ignore/
