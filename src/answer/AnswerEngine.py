@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/24 16:36:18 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/25 10:32:38 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,6 +14,7 @@ import json
 import uuid
 from rich.console import Console
 from pathlib import Path
+from tqdm import tqdm
 from transformers import pipeline
 from src.model import ChunkSearchResult, StudentSearchResults, MinimalAnswer, StudentSearchResultsAndAnswer
 from src.config import RAGError
@@ -32,7 +33,7 @@ class AnswerEngine:
         # Load the LLM
         self._load_llm()
 
-    def answer(self, source: list[ChunkSearchResult], question: str) -> MinimalAnswer:
+    def answer(self, source: list[ChunkSearchResult], question: str, question_id: uuid.UUID | None = None) -> MinimalAnswer:
         if not source:
             return "Invalid source or empty source. Discarding..."
 
@@ -46,7 +47,7 @@ class AnswerEngine:
         clean_answer = raw_answer.replace("<think>", "").replace("</think>", "").strip()
 
         answer_result: MinimalAnswer = MinimalAnswer(
-            question_id=str(uuid.uuid4()),
+            question_id=str(uuid.uuid4()) if question_id is None else question_id,
             question=question,
             retrieved_sources=source,
             answer=clean_answer
@@ -54,11 +55,20 @@ class AnswerEngine:
 
         return answer_result
 
-    def answer_dataset(self, filepath: Path) -> MinimalAnswer:
+    def answer_dataset(self, filepath: Path) -> StudentSearchResultsAndAnswer:
         search_result = self._create_dataset(filepath)
-        for item in search_result.search_results:
-            print(item.question)
 
+        list_answer: list[MinimalAnswer] = []
+        for item in tqdm(search_result.search_results, desc="Generating answers from dataset"):
+            answer = self.answer(item.retrieved_sources, item.question, item.question_id if item.question_id is not None else None)
+            list_answer.append(answer)
+
+        answered_dataset = StudentSearchResultsAndAnswer (
+            search_result=list_answer,
+            k=search_result.k
+        )
+
+        print(answered_dataset)
 
     # :-----------------:
     #   PRIVATE METHODS
