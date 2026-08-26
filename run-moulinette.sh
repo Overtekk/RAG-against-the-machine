@@ -55,7 +55,20 @@ case "$1" in
 	evaluate_answer)
 		printf "${PURPLE}Running the evaluation for the student answer results ...\n\n${RESET}"
 
-		;;
+		# Answered : dataset_code
+        printf "🗨 Path: Answered -> dataset_code\n--------\n"
+        ./moulinette evaluate_student_answers \
+                     "data/output/search_results_and_answer/AnsweredQuestions/dataset_code_public.json" \
+                     "data/datasets/AnsweredQuestions/dataset_code_public.json"
+        printf "\n\n"
+
+        # Answered : dataset_docs
+        printf "🗨 Path: Answered -> dataset_docs\n--------\n"
+        ./moulinette evaluate_student_answers \
+                     "data/output/search_results_and_answer/AnsweredQuestions/dataset_docs_public.json" \
+                     "data/datasets/AnsweredQuestions/dataset_docs_public.json"
+        printf "\n\n"
+        ;;
 
 	*)
 		printf "${RED}Error: unkown argument '%s'.\n${RESET}" "$1"

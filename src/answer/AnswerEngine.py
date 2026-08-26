@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/25 16:20:59 by roandrie        ###   ########.fr        #
+#  Updated: 2026/08/26 10:51:58 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,6 +21,7 @@ from src.config import RAGError
 from src.utils import print_log
 
 MAX_NEW_TOKENS: int = 256
+BATCH_SIZE: int = 4
 
 console = Console()
 
@@ -55,21 +56,40 @@ class AnswerEngine:
 
         return answer_result
 
-    def answer_dataset(self, filepath: Path) -> StudentSearchResultsAndAnswer:
+    def answer_dataset(self, filepath: Path, save_dir: Path) -> StudentSearchResultsAndAnswer:
         search_result = self._create_dataset(filepath)
+        items = search_result.search_results
+
+        print_log(f"Loaded {len(search_result.search_results)} questions.")
+
+        prompts = [self._generate_prompt(item.retrieved_sources, item.question) for item in items]
+        raw_answers = self._generate_batch_answers(prompts)
 
         list_answer: list[MinimalAnswer] = []
-        for item in tqdm(search_result.search_results, desc="Generating answers from dataset"):
-            answer = self.answer(item.retrieved_sources, item.question, item.question_id if item.question_id is not None else None)
-            list_answer.append(answer)
-            break
+        # for item in tqdm(search_result.search_results, desc="Generating answers from dataset"):
+        #     answer = self.answer(item.retrieved_sources, item.question, item.question_id if item.question_id is not None else None)
+        #     list_answer.append(answer)
+        for item, raw_answer in zip(items, raw_answers):
+            clean_answer = raw_answer.replace("<think>", "").replace("</think>", "").strip()
+            answer_result = MinimalAnswer(
+            question_id=item.question_id,
+            question=item.question,
+            retrieved_sources=item.retrieved_sources,
+            answer=clean_answer
+        )
+            list_answer.append(answer_result)
 
         answered_dataset = StudentSearchResultsAndAnswer (
             search_results=list_answer,
             k=search_result.k
         )
 
-        print(answered_dataset)
+        save_file_path = Path(save_dir) / filepath.name
+        with open(save_file_path, 'w', encoding='utf-8') as f:
+            f.write(answered_dataset.model_dump_json(indent=4))
+
+        print_log(f"Processed {len(list_answer)} questions.")
+        print_log(f"Save student_search_results_and_answer to '{save_file_path}'.")
 
     # :-----------------:
     #   PRIVATE METHODS
@@ -87,10 +107,21 @@ class AnswerEngine:
         )
         self._pipe.model.generation_config.max_new_tokens = MAX_NEW_TOKENS
         self._pipe.generation_config.max_length = None
+        self._pipe.tokenizer.pad_token_id = self._pipe.tokenizer.eos_token_id
+        self._pipe.tokenizer.padding_side = "left"
 
     def _generate_answer(self, message: str) -> str:
         output = self._pipe(message, return_full_text=False)
         return output[0]["generated_text"]
+
+    def _generate_batch_answers(self, messages: list[list[dict[str, str]]]) -> list[str]:
+        outputs: list[str] = []
+        for i in tqdm(range(0, len(messages), BATCH_SIZE), desc="Generate answers..."):
+            batch = messages[i : i + BATCH_SIZE]
+            batch_results = self._pipe(batch, batch_size=BATCH_SIZE, return_full_text=False)
+            for res in batch_results:
+                outputs.append(res[0]["generated_text"])
+        return outputs
 
     def _generate_prompt(self, sources: list[ChunkSearchResult], prompt: str) -> str:
         # Preparing source formatting
@@ -117,7 +148,6 @@ class AnswerEngine:
         ]
 
         return message
-
 
     def _create_dataset(self, filepath: Path) -> StudentSearchResults:
         if filepath is None:
