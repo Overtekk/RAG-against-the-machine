@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/26 09:56:12 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/01 11:45:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -26,6 +26,7 @@ from src.config import PathConfig, RAGConfig, RAGError
 from src.indexer import indexer, utils
 from src.retriever import RetrieverEngine
 from src.answer import AnswerEngine
+from src.recall import Recall
 
 
 LIST_DIRECTORY: dict[str, str] = {
@@ -206,7 +207,7 @@ class RAGEngine:
             PathConfig.DEFAULT_SAVE_DIRECTORY
         ),
         save_directory: str = PathConfig.DEFAULT_ANSWER_SAVE_DIRECTORY,
-        context_limit: int = 500
+        context_limit: int = 3000
     ) -> None:
         # - SECURITY -
         try:
@@ -222,22 +223,33 @@ class RAGEngine:
             # Go throught the dataset path given
             path = Path(student_search_results_path)
             for file in ([path] if path.is_file() else list(path.rglob("*.json"))):
-                result = engine.answer_dataset(file, save_directory)
-                return
+                engine.answer_dataset(file, save_directory)
 
         except RAGError as e:
             raise ValueError(e)
 
     @func_timer
-    def evaluate_student_search_results(
+    def evaluate(
         self,
-        student_answer_path: str = PathConfig.DEFAULT_STUDENT_ANSWER_PATH,
+        student_search_results_path: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
-        k: int = 10,
-        max_context_length: int = 2000,
     ) -> None:
+        if not Path(dataset_path).is_file() or Path(dataset_path).suffix != ".json" or not check_perm_can_read(dataset_path):
+            raise ValueError("Please provide a json file from 'data/datasets'.")
+        else:
+            dataset = Path(dataset_path)
+
         # Check paths
-        _check_path(dataset_path)
+        try:
+            # Init the recaller
+            recaller = Recall(dataset)
+
+            student_path = Path(student_search_results_path)
+            for file in ([student_path] if student_path.is_file() else list(student_path.rglob("*.json"))):
+                recaller.recall_file(file)
+
+        except RAGError as e:
+            raise ValueError(e)
 
     def execute_pipeline(self) -> None:
         # 1. Index
@@ -348,3 +360,30 @@ def _check_if_int(variable: Any) -> bool:
     except ValueError:
         return False
     return True
+
+
+def _get_datasets(path: str) -> dict[str, Path]:
+    dataset_dict: dict[str, Path] = {}
+    p_path = Path(path)
+
+    if not is_folder_exist(p_path):
+        raise ValueError("Datasets not found.")
+
+    for folder in p_path.iterdir():
+        if folder.name == "UnansweredQuestions":
+            for file in folder.iterdir():
+                if file.is_file() and file.suffix == ".json":
+                    if file.name == "dataset_docs_public.json":
+                        dataset_dict["Unanswered/Doc"] = file
+                    elif file.name == "dataset_code_public.json":
+                        dataset_dict["Unanswered/Code"] = file
+
+        elif folder.name == "AnsweredQuestions":
+            for file in folder.iterdir():
+                if file.is_file() and file.suffix == ".json":
+                    if file.name == "dataset_docs_public.json":
+                        dataset_dict["Answered/Doc"] = file
+                    elif file.name == "dataset_code_public.json":
+                        dataset_dict["Answered/Code"] = file
+
+    return dataset_dict

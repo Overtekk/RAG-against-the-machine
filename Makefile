@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:29:48 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/18 11:12:29 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/01 09:38:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -83,11 +83,11 @@ answer:				install
 
 answer_dataset:		install
 					@clear
-					$(RUN) answer_dataset --student_search_results_path=$(save_directory) --save_directory=$(answer_save_directory) --context_limit=$(context_limit)
+					$(RUN) answer_dataset --student_search_results_path="$(save_directory)" --save_directory="$(answer_save_directory)" --context_limit=$(context_limit)
 
-eval:				install
+evaluate:			install
 					@clear
-					$(RUN) evaluate_student_search_results
+					$(RUN) evaluate --student_search_results_path="$(save_directory)" --dataset_path="$(dataset_path)"
 
 moulinette:
 					@echo "Use either 'moulinette_search' or 'moulinette_answer'"
