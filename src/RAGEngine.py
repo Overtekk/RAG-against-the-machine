@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/01 11:45:43 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/07 19:34:51 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -246,7 +246,8 @@ class RAGEngine:
 
             student_path = Path(student_search_results_path)
             for file in ([student_path] if student_path.is_file() else list(student_path.rglob("*.json"))):
-                recaller.recall_file(file)
+                recall_results = recaller.recall_file(file)
+                recaller.print_recall_results(recall_results)
 
         except RAGError as e:
             raise ValueError(e)

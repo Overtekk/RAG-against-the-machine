@@ -20,6 +20,8 @@ data/raw/
 data/output/
 datasets_public.zip
 hf_cache
+vllm-0.10.1.zip:Zone.Identifier
 # Test
 data/datasets/test.json
 ignore/
+test.json
