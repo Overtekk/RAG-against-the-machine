@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/07 19:34:51 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/07 19:53:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -199,6 +199,8 @@ class RAGEngine:
 
         print_with_color("\nRAG: ", "bright_yellow")
         print_with_color(f"{results.answer}\n", "white")
+        for source in results.retrieved_sources:
+            print_with_color(f"{source.file_path}", "gray66")
 
     @func_timer
     def answer_dataset(
