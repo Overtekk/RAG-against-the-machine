@@ -12,7 +12,7 @@
 
 | Objective | Statut |
 | :-------: | :----: |
-| Using the model **Qwen/Qwen3-0.6B** | ❌ |
+| Using the model **Qwen/Qwen3-0.6B** | ✅ |
 | Provide a CLI using Python Fire | ✅ |
 | Implemente a progress bars using `tqdm` | ✅ |
 | Repo contains: `src/`, `pyproject.toml`, `uv.lock`, `README.md` | ✅ |
@@ -48,27 +48,27 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
 
 | Objective | Statut |
 | :-------: | :----: |
-| Pass retrieved context to the LLM withing token limits | ❌ |
-| Generate answers based on the retrieved code and documentation | ❌ |
-| Output structured JSON following the provided pydantic models | ❌ |
+| Pass retrieved context to the LLM withing token limits | ✅ |
+| Generate answers based on the retrieved code and documentation | ✅ |
+| Output structured JSON following the provided pydantic models | ✅ |
 
 ##### Good Answer:
 
 | Objective | Statut |
 | :-------: | :----: |
-| Readable without seeing the original question | ❌ |
+| Readable without seeing the original question | ✅ |
 | Cites the source(s) it draws from | ❌ |
-| Limits itself to source content (no hallucination) | ❌ |
-| Directly answers the queston asked | ❌ |
+| Limits itself to source content (no hallucination) | ✅ |
+| Directly answers the queston asked | ✅ |
 
 #### 3.4 Evaluation System
 
 | Objective | Statut |
 | :-------: | :----: |
-| Implement recall@k metric to measure retrieval quality | ❌ |
-| Compare retrieved sources against ground truth annotations | ❌ |
-| Calculate overlap between retrieved and correct souces (minimum 5% overlap counts as found) | ❌ |
-| Provide detailed performance metrics | ❌ |
+| Implement recall@k metric to measure retrieval quality | ✅ |
+| Compare retrieved sources against ground truth annotations | ✅ |
+| Calculate overlap between retrieved and correct souces (minimum 5% overlap counts as found) | ✅ |
+| Provide detailed performance metrics | ✅ |
 
 #### 3.5 CLI
 
@@ -77,10 +77,10 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
 | `index` (index the repository) implemented | ✅ |
 | `search` (search for a single query) implemented | ✅ |
 | `search_dataset` (process multiple questions and output search results) implemented | ✅ |
-| `answer` (answer a single question with context) | ❌ |
-| `answer_dataset` (generate answers from search results) | ❌ |
-| `evaluate` (evaluate search results against ground truth) | ❌ |
-| Handle edge cases and degenerate inputs gracefully with clear error messages | ❌ |
+| `answer` (answer a single question with context) | ✅ |
+| `answer_dataset` (generate answers from search results) | ✅ |
+| `evaluate` (evaluate search results against ground truth) | ✅ |
+| Handle edge cases and degenerate inputs gracefully with clear error messages | ✅ |
 
 ### 4. Data Models
 
@@ -106,8 +106,8 @@ Configure maximum chunk size via CLI argument (maximum 2000 characters) | ✅ |
 | Objective | Statut |
 | :-------: | :----: |
 | Performance indexing time: 5 minutes max | ✅ |
-| Performance cold start latency: 60 seconds max | ❌ |
-| Performance warm retrieval throughput: 90 seconds maximum for 1000 questions | ❌ |
+| Performance cold start latency: 60 seconds max | ✅ |
+| Performance warm retrieval throughput: 90 seconds maximum for 1000 questions | ✅ |
 | Performance recall@5: 80% on docs questions, 50% on code | ✅ |
 
 ### 7. Bonus
