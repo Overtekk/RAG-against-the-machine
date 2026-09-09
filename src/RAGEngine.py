@@ -6,13 +6,13 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/07 19:53:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 10:45:45 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 from pathlib import Path
 from typing import Any
-from src.model.models import ChunkSearchResult
+from src.model.models import ChunkSearchResult, MinimalAnswer
 from src.utils import (
     is_folder_exist,
     is_file_exist,
@@ -171,7 +171,7 @@ class RAGEngine:
             raise ValueError(e)
 
     @func_timer
-    def answer(self, query: str, k: int = 10, context_limit: int = 500) -> None:
+    def answer(self, query: str, k: int = 10, context_limit: int = 3000) -> None:
         # - SECURITY -
         try:
             _check_value_range(
@@ -193,6 +193,8 @@ class RAGEngine:
             # Init the engine
             engine = AnswerEngine(context_limit)
             results = engine.answer(search_result, query)
+            if not isinstance(results, MinimalAnswer):
+                return
 
         except RAGError as e:
             raise ValueError(e)

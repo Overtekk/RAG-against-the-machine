@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/25 16:22:14 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 10:55:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -39,10 +39,10 @@ def main() -> int:
         print_with_color("\n📥 RAG left the terminal.", "bright_yellow")
         return 1
 
-    # except Exception as e:
-    #     print_error(f"Critical error: {e}")
-    #     print_with_color('\nRAG left the terminal.', 'bright_yellow')
-    #     return 1
+    except Exception as e:
+        print_error(f"Critical error: {e}")
+        print_with_color('\nRAG left the terminal.', 'bright_yellow')
+        return 1
 
 
 if __name__ == "__main__":

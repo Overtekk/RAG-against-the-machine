@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/26 10:51:58 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 10:48:08 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -128,7 +128,7 @@ class AnswerEngine:
         formatted_source = "\n".join([str(source.content) for source in sources])
         # Cut if text too long
         if len(formatted_source) > self._context_limit:
-            formatted_source = formatted_source[:1000]
+            formatted_source = formatted_source[:self._context_limit]
 
 
         # Prepare the prompt (/no_think prevent the model to using the <think>)

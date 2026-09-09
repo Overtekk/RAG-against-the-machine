@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 11:11:55 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/07 19:32:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 10:52:41 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -66,7 +66,7 @@ class AnsweredQuestion(UnansweredQuestion):
         answer: raw question.
     """
 
-    sources: list[ChunkSearchResult]
+    sources: list[MinimalSource]
     answer: str
 
 
