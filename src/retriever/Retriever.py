@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/08/20 09:54:27 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:37:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -30,7 +30,15 @@ from src.utils import print_log, print_rule, is_folder_exist, is_file_exist
 
 
 class RetrieverEngine:
+    """Load the BM25 index and retrieve relevant chunks for a search query."""
+
     def __init__(self, k: int, directories_list: dict[str, str]) -> None:
+        """Initialize the retriever with the BM25 index and chunk database.
+
+        Args:
+            k: Number of chunks to retrieve per query.
+            directories_list: Storage paths for BM25 and chunk datasets.
+        """
         self._k = k
         self._directories_list = directories_list
         self._load_database()
@@ -39,6 +47,17 @@ class RetrieverEngine:
         self.stemmer = Stemmer.Stemmer("english")
 
     def retrieve(self, query: str) -> list[ChunkSearchResult]:
+        """Retrieve the top-k chunk matches for a user query.
+
+        Args:
+            query: Query text to search.
+
+        Returns:
+            list[ChunkSearchResult]: Ranked retrieved chunks.
+
+        Raises:
+            RAGError: If the BM25 index or chunk database is invalid.
+        """
         # Tokenize the query
         query_token = bm25s.tokenize(
             query,
@@ -86,6 +105,14 @@ class RetrieverEngine:
     def retrieve_dataset(
         self, dataset: list[AnsweredQuestion | UnansweredQuestion]
     ) -> list[MinimalSearchResults]:
+        """Retrieve relevant chunks for each question in a dataset.
+
+        Args:
+            dataset: List of questions to process.
+
+        Returns:
+            list[MinimalSearchResults]: Retrieval results for each question.
+        """
         minimal_search_results: list[MinimalSearchResults] = []
         # Create the Pydantic object and add it to the list
         for data in dataset:
@@ -104,6 +131,13 @@ class RetrieverEngine:
         save_dir: str,
         file_name: str,
     ) -> None:
+        """Save search results for a dataset to JSON.
+
+        Args:
+            minimal_search_results: Retrieval results to save.
+            save_dir: Output directory.
+            file_name: Output file name.
+        """
         # Create the Pydantic object
         results = StudentSearchResults(
             search_results=minimal_search_results, k=self._k
@@ -120,6 +154,15 @@ class RetrieverEngine:
     def create_dataset(
         self, file_path: Path
     ) -> list[AnsweredQuestion | UnansweredQuestion] | None:
+        """Load a JSON dataset file into a validated question list.
+
+        Args:
+            file_path: Dataset file path.
+
+        Returns:
+            list[AnsweredQuestion | UnansweredQuestion] | None: Parsed questions, or
+            None if the file could not be parsed.
+        """
         rag_dataset: list[AnsweredQuestion | UnansweredQuestion] = []
 
         # Check the model between Answered and Unanswered
@@ -152,6 +195,7 @@ class RetrieverEngine:
     # :-----------------:
 
     def _load_database(self) -> None:
+        """Load the BM25 index and chunk database from disk."""
         # - SECURITY -
         chunk_db_file = os.path.join(
             self._directories_list["chunk_dir"], "chunks_db.json"
@@ -182,6 +226,14 @@ class RetrieverEngine:
         print_rule()
 
     def _security_checker(self, chunk_db_file: str) -> None:
+        """Validate the presence and integrity of the index and chunk database.
+
+        Args:
+            chunk_db_file: Path to the chunk database JSON file.
+
+        Raises:
+            RAGError: If the required database files are missing or empty.
+        """
         # - BM25 Directory -
         # Check that the BM25 directory exist.
         if not is_folder_exist(self._directories_list["bm25_dir"]):

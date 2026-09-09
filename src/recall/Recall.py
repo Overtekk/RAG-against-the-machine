@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/09/01 09:21:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/07 19:35:20 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:36:38 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -18,23 +18,45 @@ from src import RAGError
 from src.model import MinimalSource, RagDataset, StudentSearchResults
 
 class Score(Enum):
+    """Enum representing the outcome of a question-level recall check."""
+
     FAILED = 0.0
     SUCCESS = 1.0
 
     def __str__(self) -> str:
+        """Return the numeric score as a string representation."""
         return str(self.value)
 
 class DatasetType(Enum):
+    """Enum describing whether a dataset belongs to code or documentation retrieval."""
     CODE = auto()
     DOCS = auto()
 
 
 class Recall:
+    """Evaluate retrieval recall against a reference dataset."""
+
     def __init__(self, dataset: Path) -> None:
+        """Initialize the recall evaluator for a reference dataset.
+
+        Args:
+            dataset: Path to the reference JSON dataset.
+        """
         self._validate_dataset_type(dataset)
         self.dataset = dataset
 
     def recall_file(self, file_path: Path) -> dict[str, Any]:
+        """Compute recall for one student search result file.
+
+        Args:
+            file_path: JSON file containing the student search results.
+
+        Returns:
+            dict[str, Any]: Evaluation metrics and recall score.
+
+        Raises:
+            RAGError: If the dataset type is invalid.
+        """
         valid_student_data: bool = False
 
         dataset_type: DatasetType = DatasetType.CODE if "dataset_code" in self.dataset.name else DatasetType.DOCS
@@ -105,6 +127,11 @@ class Recall:
 
     @staticmethod
     def print_recall_results(recall_dict: dict[str, Any]) -> None:
+        """Print the formatted recall metrics for a student result file.
+
+        Args:
+            recall_dict: Metric dictionary returned by recall_file.
+        """
         print(f"File: {recall_dict['file_path']}")
         print(f"Dataset: {recall_dict['dataset_path']}")
         print("")
@@ -131,6 +158,15 @@ class Recall:
 
     @staticmethod
     def _compute_iou(source_a: MinimalSource, source_b: MinimalSource) -> float:
+        """Compute the intersection-over-union between two source spans.
+
+        Args:
+            source_a: First source span.
+            source_b: Second source span.
+
+        Returns:
+            float: IoU value between 0.0 and 1.0.
+        """
         inter_start: int = max(source_a.first_character_index, source_b.first_character_index)
         inter_end: int = min(source_a.last_character_index, source_b.last_character_index)
         intersection: int = max(0, inter_end - inter_start)
@@ -146,6 +182,14 @@ class Recall:
 
     @staticmethod
     def _validate_dataset_type(dataset: Path) -> None:
+        """Validate that the dataset comes from the expected answered-question path.
+
+        Args:
+            dataset: Dataset path to validate.
+
+        Raises:
+            RAGError: If the dataset path does not match the expected structure.
+        """
         required_parts = {"data", "datasets", "AnsweredQuestions"}
         if not required_parts.issubset(dataset.parts):
            raise RAGError("Please provide a json file from 'data/datasets/AnsweredQuestions'.")

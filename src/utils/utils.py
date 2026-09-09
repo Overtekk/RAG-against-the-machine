@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 13:40:01 by roandrie        #+#    #+#               #
-#  Updated: 2026/07/20 10:17:24 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:38:05 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -210,6 +210,14 @@ def print_with_color(message: str, color: str = "white") -> None:
 
 
 def _check_color_validation(color: str) -> str:
+    """Validate that a rich color name is supported.
+
+    Args:
+        color: Requested color name.
+
+    Returns:
+        str: Valid color or the default white style.
+    """
     style_rule: str = color
 
     try:

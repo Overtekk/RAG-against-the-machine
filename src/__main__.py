@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/19 19:27:46 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 10:55:31 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:38:47 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -18,11 +18,10 @@ from .RAGEngine import RAGEngine
 
 
 def main() -> int:
-    """Main function of the programm. Launch the CLI interface by calling the
-    RAGEngine class.
+    """Launch the CLI entry point for the RAG engine.
 
     Returns:
-        int: 0 if success. 1 if error.
+        int: 0 on success, 1 on a handled user-facing error.
     """
     try:
         print_with_color("\n📤 RAG joined the terminal\n", "bright_yellow")

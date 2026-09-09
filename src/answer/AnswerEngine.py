@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/28 17:09:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 10:48:08 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:33:34 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -27,7 +27,15 @@ console = Console()
 
 
 class AnswerEngine:
+    """Generate answer text from retrieved document chunks using an LLM pipeline."""
+
     def __init__(self, context_limit: int, llm_model: str = "Qwen/Qwen3-0.6B") -> None:
+        """Initialize the answer engine and load the language model.
+
+        Args:
+            context_limit: Maximum number of characters to include in the prompt.
+            llm_model: Hugging Face model identifier used for generation.
+        """
         self._context_limit = context_limit
         self._llm_model = llm_model
 
@@ -35,6 +43,19 @@ class AnswerEngine:
         self._load_llm()
 
     def answer(self, source: list[ChunkSearchResult], question: str, question_id: uuid.UUID | None = None) -> MinimalAnswer:
+        """Generate a single answer from a list of retrieved chunks.
+
+        Args:
+            source: Retrieved source chunks.
+            question: User question to answer.
+            question_id: Optional question identifier.
+
+        Returns:
+            MinimalAnswer: Structured answer containing the question, sources and text.
+
+        Raises:
+            RAGError: If the source list is invalid.
+        """
         if not source:
             return "Invalid source or empty source. Discarding..."
 
@@ -57,6 +78,18 @@ class AnswerEngine:
         return answer_result
 
     def answer_dataset(self, filepath: Path, save_dir: Path) -> StudentSearchResultsAndAnswer:
+        """Generate answers for an entire dataset and save the results.
+
+        Args:
+            filepath: Path to the JSON file containing search results.
+            save_dir: Directory where the answered dataset is saved.
+
+        Returns:
+            StudentSearchResultsAndAnswer: Answered dataset payload.
+
+        Raises:
+            RAGError: If the input file is invalid.
+        """
         search_result = self._create_dataset(filepath)
         items = search_result.search_results
 
@@ -96,6 +129,7 @@ class AnswerEngine:
     # :-----------------:
 
     def _load_llm(self) -> None:
+        """Load the text-generation pipeline used to produce answers."""
         print_log(f"Initializing LLM using '{self._llm_model}'", "gold1")
 
         # Load the model throught pipeline
@@ -111,10 +145,26 @@ class AnswerEngine:
         self._pipe.tokenizer.padding_side = "left"
 
     def _generate_answer(self, message: str) -> str:
+        """Generate one answer from a formatted prompt.
+
+        Args:
+            message: Prompt payload sent to the model.
+
+        Returns:
+            str: Raw model output without the full text prefix.
+        """
         output = self._pipe(message, return_full_text=False)
         return output[0]["generated_text"]
 
     def _generate_batch_answers(self, messages: list[list[dict[str, str]]]) -> list[str]:
+        """Generate answers for multiple prompts in batches.
+
+        Args:
+            messages: List of prompt messages for the model.
+
+        Returns:
+            list[str]: Generated answers in the same order as the input prompts.
+        """
         outputs: list[str] = []
         for i in tqdm(range(0, len(messages), BATCH_SIZE), desc="Generate answers..."):
             batch = messages[i : i + BATCH_SIZE]
@@ -124,6 +174,15 @@ class AnswerEngine:
         return outputs
 
     def _generate_prompt(self, sources: list[ChunkSearchResult], prompt: str) -> str:
+        """Build the system and user prompt used to answer a question.
+
+        Args:
+            sources: Retrieved chunks used as evidence.
+            prompt: User question.
+
+        Returns:
+            str: Prompt payload formatted for the model.
+        """
         # Preparing source formatting
         formatted_source = "\n".join([str(source.content) for source in sources])
         # Cut if text too long
@@ -150,6 +209,17 @@ class AnswerEngine:
         return message
 
     def _create_dataset(self, filepath: Path) -> StudentSearchResults:
+        """Load and validate a dataset file into a Pydantic model.
+
+        Args:
+            filepath: JSON file containing search results.
+
+        Returns:
+            StudentSearchResults: Validated dataset.
+
+        Raises:
+            RAGError: If the input filepath is empty or invalid.
+        """
         if filepath is None:
             raise RAGError("empty filepath.")
 

@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 10:45:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:31:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -38,8 +38,21 @@ LIST_DIRECTORY: dict[str, str] = {
 
 
 class RAGEngine:
+    """Main orchestration entry point for indexing, searching, answering and evaluation."""
+
     @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
+        """Index the raw vLLM corpus and build the search database.
+
+        The method validates the chunk size, ensures the vLLM data is available,
+        creates all required directories, and launches the indexing pipeline.
+
+        Args:
+            max_chunk_size: Maximum number of characters per chunk.
+
+        Raises:
+            ValueError: If the chunk size is invalid or the vLLM data cannot be used.
+        """
         # - SECURITY -
         try:
             _check_value_range(
@@ -97,6 +110,20 @@ class RAGEngine:
         k: int = 10,
         verbose: bool = True
     ) -> list[ChunkSearchResult]:
+        """Search the indexed corpus for the best matching chunks.
+
+        Args:
+            query: User question to search for.
+            k: Maximum number of chunks to retrieve.
+            verbose: If true, print each chunk result to stdout.
+
+        Returns:
+            list[ChunkSearchResult]: Matching chunks ranked by relevance. Returns None
+            when verbose output is enabled.
+
+        Raises:
+            ValueError: If the query is empty or the retrieval parameters are invalid.
+        """
         # - SECURITY -
         try:
             _check_value_range(
@@ -139,6 +166,16 @@ class RAGEngine:
         k: int = 10,
         save_directory: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
     ) -> None:
+        """Run retrieval over every JSON dataset file in a directory.
+
+        Args:
+            dataset_path: Path to a file or directory containing dataset JSON files.
+            k: Max number of chunks to keep per question.
+            save_directory: Directory where student retrieval results are stored.
+
+        Raises:
+            ValueError: If the dataset path or configuration is invalid.
+        """
         # - SECURITY -
         try:
             _check_value_range(
@@ -172,6 +209,16 @@ class RAGEngine:
 
     @func_timer
     def answer(self, query: str, k: int = 10, context_limit: int = 3000) -> None:
+        """Generate a concise answer from the retrieved documents.
+
+        Args:
+            query: User question to answer.
+            k: Number of source chunks to retrieve.
+            context_limit: Maximum number of characters to include from retrieved sources.
+
+        Raises:
+            ValueError: If the prompt or retrieval configuration is invalid.
+        """
         # - SECURITY -
         try:
             _check_value_range(
@@ -213,6 +260,16 @@ class RAGEngine:
         save_directory: str = PathConfig.DEFAULT_ANSWER_SAVE_DIRECTORY,
         context_limit: int = 3000
     ) -> None:
+        """Generate answers for every search result file in a dataset directory.
+
+        Args:
+            student_search_results_path: Directory or file containing retrieval outputs.
+            save_directory: Directory where answer files are saved.
+            context_limit: Maximum size of the prompt context passed to the model.
+
+        Raises:
+            ValueError: If the context limit is invalid.
+        """
         # - SECURITY -
         try:
             _check_value_range(context_limit, RAGConfig.MIN_CONTEXT_LIMIT, RAGConfig.MAX_CONTEXT_LIMIT, "context limit")
@@ -238,6 +295,15 @@ class RAGEngine:
         student_search_results_path: str = PathConfig.DEFAULT_SAVE_DIRECTORY,
         dataset_path: str = PathConfig.DEFAULT_DATASET_PATH,
     ) -> None:
+        """Evaluate student retrieval recall against the reference dataset.
+
+        Args:
+            student_search_results_path: Directory or file containing student search outputs.
+            dataset_path: Path to the reference JSON dataset.
+
+        Raises:
+            ValueError: If the evaluation dataset is invalid.
+        """
         if not Path(dataset_path).is_file() or Path(dataset_path).suffix != ".json" or not check_perm_can_read(dataset_path):
             raise ValueError("Please provide a json file from 'data/datasets'.")
         else:
@@ -257,6 +323,7 @@ class RAGEngine:
             raise ValueError(e)
 
     def execute_pipeline(self) -> None:
+        """Run the default indexing and retrieval pipeline across the project datasets."""
         # 1. Index
         self.index()
         # 2. Search in the dataset
@@ -368,6 +435,17 @@ def _check_if_int(variable: Any) -> bool:
 
 
 def _get_datasets(path: str) -> dict[str, Path]:
+    """Collect the relevant answered and unanswered dataset files.
+
+    Args:
+        path: Root directory containing the dataset groups.
+
+    Returns:
+        dict[str, Path]: Mapping of dataset labels to their JSON file paths.
+
+    Raises:
+        ValueError: If the dataset folder does not exist.
+    """
     dataset_dict: dict[str, Path] = {}
     p_path = Path(path)
 
