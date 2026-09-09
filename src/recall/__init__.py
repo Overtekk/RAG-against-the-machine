@@ -13,6 +13,4 @@
 from src.recall.Recall import Recall
 
 
-__all__ = [
-    "Recall"
-]
+__all__ = ["Recall"]

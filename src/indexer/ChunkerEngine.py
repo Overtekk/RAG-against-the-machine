@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 11:35:24 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:52:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,7 +16,9 @@ from src.utils import check_file_extension, print_log
 
 
 class ChunkerEngine:
-    """Split source files into fixed-size chunks while preserving context boundaries."""
+    """Split source files into fixed-size chunks while preserving context
+       boundaries.
+    """
 
     def __init__(self, chunk_size: int) -> None:
         """Initialize the chunking engine.
@@ -36,8 +38,8 @@ class ChunkerEngine:
             content: Full text content of the file.
 
         Returns:
-            list[tuple[MinimalSource, str]] | None: Chunks if the file type is supported,
-            otherwise None.
+            list[tuple[MinimalSource, str]] | None: Chunks if the file type is
+            supported, otherwise None.
         """
         for extension in [".txt", ".md"]:
             if check_file_extension(file_path, extension):
@@ -64,7 +66,8 @@ class ChunkerEngine:
             content: File contents.
 
         Returns:
-            list[tuple[MinimalSource, str]]: Generated chunks and their metadata.
+            list[tuple[MinimalSource, str]]: Generated chunks and their
+            metadata.
         """
         CHUNK_OVERLAP: int = 100
 
@@ -86,7 +89,8 @@ class ChunkerEngine:
             content: File contents.
 
         Returns:
-            list[tuple[MinimalSource, str]]: Generated chunks and their metadata.
+            list[tuple[MinimalSource, str]]: Generated chunks and their
+            metadata.
         """
         # Split the text based on the chunk size. Keep all seperators
         text_splitter = RecursiveCharacterTextSplitter(

@@ -13,6 +13,4 @@
 from src.answer.AnswerEngine import AnswerEngine
 
 
-__all__ = [
-    "AnswerEngine"
-]
+__all__ = ["AnswerEngine"]

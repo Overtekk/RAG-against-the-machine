@@ -15,6 +15,7 @@ from enum import Enum, IntEnum
 
 class PathConfig(str, Enum):
     """Paths used throughout the RAG pipeline."""
+
     DEFAULT_DATASET_PATH = "data/datasets/"
     DEFAULT_SAVE_DIRECTORY = "data/output/search_results/"
     DEFAULT_ANSWER_SAVE_DIRECTORY = "data/output/search_results_and_answer/"
@@ -34,6 +35,7 @@ class PathConfig(str, Enum):
 
 class RAGConfig(IntEnum):
     """Constraint values enforced by the RAG engine."""
+
     MIN_CHUNK_SIZE = 0
     MAX_CHUNK_SIZE = 2000
     MIN_K_CHUNKS = 0

@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/17 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 11:37:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 11:53:57 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -160,8 +160,8 @@ class RetrieverEngine:
             file_path: Dataset file path.
 
         Returns:
-            list[AnsweredQuestion | UnansweredQuestion] | None: Parsed questions, or
-            None if the file could not be parsed.
+            list[AnsweredQuestion | UnansweredQuestion] | None: Parsed
+            questions, or None if the file could not be parsed.
         """
         rag_dataset: list[AnsweredQuestion | UnansweredQuestion] = []
 
@@ -176,7 +176,8 @@ class RetrieverEngine:
 
             except JSONDecodeError:
                 print_log(
-                    f"⚠️  Error while trying to open '{file_path}'. Skipping\n",
+                    f"⚠️  Error while trying to open '{file_path}'. "
+                    "Skipping\n",
                     "gold1",
                 )
                 return None

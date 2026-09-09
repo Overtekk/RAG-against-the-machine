@@ -6,7 +6,7 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/06/29 14:12:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 11:31:43 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/09 14:35:20 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -38,20 +38,24 @@ LIST_DIRECTORY: dict[str, str] = {
 
 
 class RAGEngine:
-    """Main orchestration entry point for indexing, searching, answering and evaluation."""
+    """Main orchestration entry point for indexing, searching, answering and
+       evaluation.
+    """
 
     @func_timer
     def index(self, max_chunk_size: int = 2000) -> None:
         """Index the raw vLLM corpus and build the search database.
 
-        The method validates the chunk size, ensures the vLLM data is available,
+        The method validates the chunk size, ensures the vLLM data is
+        available,
         creates all required directories, and launches the indexing pipeline.
 
         Args:
             max_chunk_size: Maximum number of characters per chunk.
 
         Raises:
-            ValueError: If the chunk size is invalid or the vLLM data cannot be used.
+            ValueError: If the chunk size is invalid or the vLLM data cannot
+            be used.
         """
         # - SECURITY -
         try:
@@ -105,11 +109,8 @@ class RAGEngine:
 
     @func_timer
     def search(
-        self,
-        query: str,
-        k: int = 10,
-        verbose: bool = True
-    ) -> list[ChunkSearchResult]:
+        self, query: str, k: int = 10, verbose: bool = True
+    ) -> list[ChunkSearchResult] | None:
         """Search the indexed corpus for the best matching chunks.
 
         Args:
@@ -118,11 +119,12 @@ class RAGEngine:
             verbose: If true, print each chunk result to stdout.
 
         Returns:
-            list[ChunkSearchResult]: Matching chunks ranked by relevance. Returns None
-            when verbose output is enabled.
+            list[ChunkSearchResult]: Matching chunks ranked by relevance.
+            Returns None when verbose output is enabled.
 
         Raises:
-            ValueError: If the query is empty or the retrieval parameters are invalid.
+            ValueError: If the query is empty or the retrieval parameters are
+            invalid.
         """
         # - SECURITY -
         try:
@@ -169,9 +171,11 @@ class RAGEngine:
         """Run retrieval over every JSON dataset file in a directory.
 
         Args:
-            dataset_path: Path to a file or directory containing dataset JSON files.
+            dataset_path: Path to a file or directory containing dataset JSON
+            files.
             k: Max number of chunks to keep per question.
-            save_directory: Directory where student retrieval results are stored.
+            save_directory: Directory where student retrieval results are
+            stored.
 
         Raises:
             ValueError: If the dataset path or configuration is invalid.
@@ -208,13 +212,16 @@ class RAGEngine:
             raise ValueError(e)
 
     @func_timer
-    def answer(self, query: str, k: int = 10, context_limit: int = 3000) -> None:
+    def answer(
+        self, query: str, k: int = 10, context_limit: int = 3000
+    ) -> None:
         """Generate a concise answer from the retrieved documents.
 
         Args:
             query: User question to answer.
             k: Number of source chunks to retrieve.
-            context_limit: Maximum number of characters to include from retrieved sources.
+            context_limit: Maximum number of characters to include from
+            retrieved sources.
 
         Raises:
             ValueError: If the prompt or retrieval configuration is invalid.
@@ -227,7 +234,12 @@ class RAGEngine:
                 RAGConfig.MAX_K_CHUNKS,
                 "token budget",
             )
-            _check_value_range(context_limit, RAGConfig.MIN_CONTEXT_LIMIT, RAGConfig.MAX_CONTEXT_LIMIT, "context limit")
+            _check_value_range(
+                context_limit,
+                RAGConfig.MIN_CONTEXT_LIMIT,
+                RAGConfig.MAX_CONTEXT_LIMIT,
+                "context limit",
+            )
         except RAGError as e:
             raise ValueError(e)
         if not query or not isinstance(query, str):
@@ -254,25 +266,31 @@ class RAGEngine:
     @func_timer
     def answer_dataset(
         self,
-        student_search_results_path: str = (
-            PathConfig.DEFAULT_SAVE_DIRECTORY
-        ),
+        student_search_results_path: str = (PathConfig.DEFAULT_SAVE_DIRECTORY),
         save_directory: str = PathConfig.DEFAULT_ANSWER_SAVE_DIRECTORY,
-        context_limit: int = 3000
+        context_limit: int = 3000,
     ) -> None:
-        """Generate answers for every search result file in a dataset directory.
+        """Generate answers for every search result file in a dataset
+           directory.
 
         Args:
-            student_search_results_path: Directory or file containing retrieval outputs.
+            student_search_results_path: Directory or file containing retrieval
+            outputs.
             save_directory: Directory where answer files are saved.
-            context_limit: Maximum size of the prompt context passed to the model.
+            context_limit: Maximum size of the prompt context passed to the
+            model.
 
         Raises:
             ValueError: If the context limit is invalid.
         """
         # - SECURITY -
         try:
-            _check_value_range(context_limit, RAGConfig.MIN_CONTEXT_LIMIT, RAGConfig.MAX_CONTEXT_LIMIT, "context limit")
+            _check_value_range(
+                context_limit,
+                RAGConfig.MIN_CONTEXT_LIMIT,
+                RAGConfig.MAX_CONTEXT_LIMIT,
+                "context limit",
+            )
         except RAGError as e:
             raise ValueError(e)
         _check_path(save_directory, True)
@@ -283,8 +301,10 @@ class RAGEngine:
 
             # Go throught the dataset path given
             path = Path(student_search_results_path)
-            for file in ([path] if path.is_file() else list(path.rglob("*.json"))):
-                engine.answer_dataset(file, save_directory)
+            for file in (
+                [path] if path.is_file() else list(path.rglob("*.json"))
+            ):
+                engine.answer_dataset(file, Path(save_directory))
 
         except RAGError as e:
             raise ValueError(e)
@@ -298,14 +318,21 @@ class RAGEngine:
         """Evaluate student retrieval recall against the reference dataset.
 
         Args:
-            student_search_results_path: Directory or file containing student search outputs.
+            student_search_results_path: Directory or file containing student
+            search outputs.
             dataset_path: Path to the reference JSON dataset.
 
         Raises:
             ValueError: If the evaluation dataset is invalid.
         """
-        if not Path(dataset_path).is_file() or Path(dataset_path).suffix != ".json" or not check_perm_can_read(dataset_path):
-            raise ValueError("Please provide a json file from 'data/datasets'.")
+        if (
+            not Path(dataset_path).is_file()
+            or Path(dataset_path).suffix != ".json"
+            or not check_perm_can_read(dataset_path)
+        ):
+            raise ValueError(
+                "Please provide a json file from 'data/datasets'."
+            )
         else:
             dataset = Path(dataset_path)
 
@@ -315,7 +342,11 @@ class RAGEngine:
             recaller = Recall(dataset)
 
             student_path = Path(student_search_results_path)
-            for file in ([student_path] if student_path.is_file() else list(student_path.rglob("*.json"))):
+            for file in (
+                [student_path]
+                if student_path.is_file()
+                else list(student_path.rglob("*.json"))
+            ):
                 recall_results = recaller.recall_file(file)
                 recaller.print_recall_results(recall_results)
 
@@ -323,7 +354,9 @@ class RAGEngine:
             raise ValueError(e)
 
     def execute_pipeline(self) -> None:
-        """Run the default indexing and retrieval pipeline across the project datasets."""
+        """Run the default indexing and retrieval pipeline across the project
+           datasets.
+        """
         # 1. Index
         self.index()
         # 2. Search in the dataset

@@ -40,7 +40,7 @@ def main() -> int:
 
     except Exception as e:
         print_error(f"Critical error: {e}")
-        print_with_color('\nRAG left the terminal.', 'bright_yellow')
+        print_with_color("\nRAG left the terminal.", "bright_yellow")
         return 1
 
 
