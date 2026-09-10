@@ -6,13 +6,15 @@
 #  By: roandrie <roandrie@student.42lehavre.fr   +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/07/03 14:37:38 by roandrie        #+#    #+#               #
-#  Updated: 2026/09/09 11:52:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/09/10 10:22:49 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from src.model import MinimalSource
 from src.utils import check_file_extension, print_log
+
+CHUNK_OVERLAP: int = 100
 
 
 class ChunkerEngine:
@@ -93,11 +95,20 @@ class ChunkerEngine:
             metadata.
         """
         # Split the text based on the chunk size. Keep all seperators
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self._chunk_size, chunk_overlap=0, keep_separator=True
-        )
+        if check_file_extension(file_path, ".md"):
+            splitter = RecursiveCharacterTextSplitter.from_language(
+                language=Language.MARKDOWN,
+                chunk_size=self._chunk_size,
+                chunk_overlap=CHUNK_OVERLAP,
+            )
+        else:
+            splitter = RecursiveCharacterTextSplitter(
+                chunk_size=self._chunk_size,
+                chunk_overlap=CHUNK_OVERLAP,
+                keep_separator=True,
+            )
 
-        return self._split_text(text_splitter, file_path, content)
+        return self._split_text(splitter, file_path, content)
 
     def _split_text(
         self,
@@ -137,7 +148,7 @@ class ChunkerEngine:
             # Find the last index of the chunk
             sub_last_index = sub_first_index + len(sub_txt)
             # Update the index
-            index = sub_last_index
+            index = sub_first_index + 1
 
             # If valids
             if sub_last_index > sub_first_index >= 0:
